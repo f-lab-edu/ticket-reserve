@@ -1,5 +1,6 @@
 package com.kjh.ticketreserve.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,6 +12,12 @@ import org.springframework.security.web.DefaultSecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
+    private final JwtProvider jwtProvider;
+
+    public SecurityConfig(@Value("${security.jwt.secret}") String jwtSecret) {
+        this.jwtProvider = JwtProvider.create(jwtSecret);
+    }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new Pbkdf2PasswordEncoder(
@@ -18,6 +25,11 @@ public class SecurityConfig {
             128,
             100,
             Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256);
+    }
+
+    @Bean
+    public JwtProvider jwtTokenProvider() {
+        return jwtProvider;
     }
 
     @Bean
