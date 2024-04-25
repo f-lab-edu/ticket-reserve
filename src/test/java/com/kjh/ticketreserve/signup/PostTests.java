@@ -3,6 +3,8 @@ package com.kjh.ticketreserve.signup;
 import com.kjh.ticketreserve.AutoDomainSource;
 import com.kjh.ticketreserve.Credentials;
 import com.kjh.ticketreserve.EmailFixture;
+import com.kjh.ticketreserve.controller.BadRequestException;
+import com.kjh.ticketreserve.controller.ErrorResponse;
 import com.kjh.ticketreserve.jpa.UserRepository;
 import com.kjh.ticketreserve.model.User;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -62,7 +64,7 @@ public class PostTests {
 
     @ParameterizedTest
     @AutoDomainSource
-    void 이미_존재하는_이메일을_사용해_회원가입_하면_Bad_Request_상태코드를_반환한다(
+    void 이미_존재하는_이메일을_사용해_회원가입_하면_Bad_Request_상태코드와_메시지를_반환한다(
         String localPart,
         String password,
         @Autowired TestRestTemplate client
@@ -75,10 +77,12 @@ public class PostTests {
         client.postForEntity("/signup", request, Void.class);
 
         // Act
-        ResponseEntity<Void> response = client.postForEntity("/signup", request, Void.class);
+        ResponseEntity<ErrorResponse> response = client.postForEntity("/signup", request, ErrorResponse.class);
 
         // Assert
         assertThat(response.getStatusCode().value()).isEqualTo(400);
+        assertThat(response.getBody()).hasFieldOrPropertyWithValue(
+            "message", BadRequestException.DUPLICATED_EMAIL.get().getMessage());
     }
 
     @ParameterizedTest

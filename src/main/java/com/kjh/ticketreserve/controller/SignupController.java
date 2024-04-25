@@ -27,7 +27,7 @@ public class SignupController {
         try {
             repository.save(user);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            throw BadRequestException.DUPLICATED_EMAIL.get();
         }
         return ResponseEntity.ok().build();
     }

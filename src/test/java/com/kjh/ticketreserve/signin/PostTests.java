@@ -3,6 +3,8 @@ package com.kjh.ticketreserve.signin;
 import com.kjh.ticketreserve.AccessTokenCarrier;
 import com.kjh.ticketreserve.AutoDomainSource;
 import com.kjh.ticketreserve.EmailFixture;
+import com.kjh.ticketreserve.controller.BadRequestException;
+import com.kjh.ticketreserve.controller.ErrorResponse;
 import com.kjh.ticketreserve.security.JwtProvider;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,28 +23,32 @@ public class PostTests {
 
     @ParameterizedTest
     @AutoDomainSource
-    void 잘못된_비밀번호를_사용해_로그인_하면_Bad_Request_상태코드를_반환한다(
+    void 잘못된_비밀번호를_사용해_로그인_하면_Bad_Request_상태코드와_메시지를_반환한다(
         EmailFixture email,
         String password,
         String wrongPassword,
         @Autowired TestRestTemplate client
     ) {
         signup(client, email, password);
-        ResponseEntity<AccessTokenCarrier> response = signin(client, email, wrongPassword);
+        ResponseEntity<ErrorResponse> response = signin(client, email, wrongPassword, ErrorResponse.class);
         assertThat(response.getStatusCode().value()).isEqualTo(400);
+        assertThat(response.getBody()).hasFieldOrPropertyWithValue(
+            "message", BadRequestException.BAD_CREDENTIALS.get().getMessage());
     }
 
     @ParameterizedTest
     @AutoDomainSource
-    void 잘못된_이메일을_사용해_로그인_하면_Bad_Request_상태코드를_반환한다(
+    void 잘못된_이메일을_사용해_로그인_하면_Bad_Request_상태코드와_메시지를_반환한다(
         EmailFixture email,
         String password,
         EmailFixture wrongEmail,
         @Autowired TestRestTemplate client
     ) {
         signup(client, email, password);
-        ResponseEntity<AccessTokenCarrier> response = signin(client, wrongEmail, password);
+        ResponseEntity<ErrorResponse> response = signin(client, wrongEmail, password, ErrorResponse.class);
         assertThat(response.getStatusCode().value()).isEqualTo(400);
+        assertThat(response.getBody()).hasFieldOrPropertyWithValue(
+            "message", BadRequestException.BAD_CREDENTIALS.get().getMessage());
     }
 
     @ParameterizedTest
@@ -53,7 +59,7 @@ public class PostTests {
         @Autowired TestRestTemplate client
     ) {
         signup(client, email, password);
-        ResponseEntity<AccessTokenCarrier> response = signin(client, email, password);
+        ResponseEntity<AccessTokenCarrier> response = signin(client, email, password, AccessTokenCarrier.class);
         assertThat(response.getStatusCode().value()).isEqualTo(200);
     }
 
@@ -66,8 +72,7 @@ public class PostTests {
         @Autowired JwtProvider jwtProvider
     ) {
         signup(client, email, password);
-        ResponseEntity<AccessTokenCarrier> response = signin(client, email, password);
-        assertThat(response.getBody()).hasFieldOrProperty("accessToken");
+        ResponseEntity<AccessTokenCarrier> response = signin(client, email, password, AccessTokenCarrier.class);
         assertThat(jwtProvider.validateToken(Objects.requireNonNull(response.getBody()).accessToken())).isTrue();
     }
 
@@ -78,14 +83,15 @@ public class PostTests {
         client.postForEntity("/signup", request, Void.class);
     }
 
-    private static ResponseEntity<AccessTokenCarrier> signin(
+    private static <T> ResponseEntity<T> signin(
         TestRestTemplate client,
         EmailFixture email,
-        String password
+        String password,
+        Class<T> responseType
     ) {
         Map<String, String> signRequest = new HashMap<>();
         signRequest.put("email", email.value());
         signRequest.put("password", password);
-        return client.postForEntity("/signin", signRequest, AccessTokenCarrier.class);
+        return client.postForEntity("/signin", signRequest, responseType);
     }
 }
