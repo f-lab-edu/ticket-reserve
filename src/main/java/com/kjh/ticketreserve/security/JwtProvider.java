@@ -22,7 +22,7 @@ public class JwtProvider {
     }
 
     public static JwtProvider create(String jwtSecret) {
-        @SuppressWarnings("deprecation") String algorithm = SignatureAlgorithm.HS256.getJcaName();
+        String algorithm = Jwts.SIG.HS256.key().build().getAlgorithm();
         SecretKeySpec key = new SecretKeySpec(jwtSecret.getBytes(), algorithm);
         return new JwtProvider(key);
     }
