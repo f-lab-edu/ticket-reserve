@@ -1,4 +1,4 @@
-package com.kjh.ticketreserve.controller;
+package com.kjh.ticketreserve;
 
 public record ErrorResponse(String message) {
 }

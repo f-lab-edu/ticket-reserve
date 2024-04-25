@@ -1,4 +1,4 @@
-package com.kjh.ticketreserve.controller;
+package com.kjh.ticketreserve.exception;
 
 import lombok.Getter;
 import lombok.Setter;

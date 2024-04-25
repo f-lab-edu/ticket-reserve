@@ -1,5 +1,6 @@
 package com.kjh.ticketreserve.controller;
 
+import com.kjh.ticketreserve.exception.BadRequestException;
 import com.kjh.ticketreserve.jpa.UserRepository;
 import com.kjh.ticketreserve.model.User;
 import org.springframework.http.ResponseEntity;

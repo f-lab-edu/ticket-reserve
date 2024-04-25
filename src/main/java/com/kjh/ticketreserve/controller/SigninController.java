@@ -2,6 +2,7 @@ package com.kjh.ticketreserve.controller;
 
 import com.kjh.ticketreserve.AccessTokenCarrier;
 import com.kjh.ticketreserve.Credentials;
+import com.kjh.ticketreserve.exception.BadRequestException;
 import com.kjh.ticketreserve.jpa.UserRepository;
 import com.kjh.ticketreserve.model.User;
 import com.kjh.ticketreserve.security.JwtProvider;

@@ -1,5 +1,6 @@
-package com.kjh.ticketreserve.controller;
+package com.kjh.ticketreserve.exception;
 
+import com.kjh.ticketreserve.ErrorResponse;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
