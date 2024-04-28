@@ -3,7 +3,6 @@ package com.kjh.ticketreserve.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Date;
@@ -39,7 +38,7 @@ public class JwtProvider {
             .compact();
     }
 
-    private Claims parseClaims(String token) {
+    public Claims parseClaims(String token) {
         return parser.parseSignedClaims(token).getPayload();
     }
 
