@@ -50,7 +50,10 @@ public class TestLanguage {
         return response.getBody().accessToken();
     }
 
-    public static <T> ResponseEntity<T> getWithToken(TestRestTemplate client, String accessToken, String path, Class<T> type) {
+    public static <T> ResponseEntity<T> getWithToken(TestRestTemplate client,
+                                                     String accessToken,
+                                                     String path,
+                                                     Class<T> type) {
         return client.exchange(path, HttpMethod.GET, new HttpEntity<>(getHttpHeaders(accessToken)), type);
     }
 
@@ -72,6 +75,13 @@ public class TestLanguage {
         ParameterizedTypeReference<Response> responseType) {
 
         return executeWithToken(client, accessToken, path, HttpMethod.PUT, request, responseType);
+    }
+
+    public static <T> ResponseEntity<T> deleteWithToken(TestRestTemplate client,
+                                                        String accessToken,
+                                                        String path,
+                                                        Class<T> type) {
+        return client.exchange(path, HttpMethod.DELETE, new HttpEntity<>(getHttpHeaders(accessToken)), type);
     }
 
     private static HttpHeaders getHttpHeaders(String accessToken) {

@@ -25,4 +25,10 @@ public class MovieService {
         movie.setPrice(movieRequest.price());
         return movie;
     }
+
+    @Transactional
+    public void deleteMovie(long id) {
+        Movie movie = movieRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND::get);
+        movieRepository.delete(movie);
+    }
 }

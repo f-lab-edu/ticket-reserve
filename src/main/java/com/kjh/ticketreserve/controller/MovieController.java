@@ -59,4 +59,10 @@ public class MovieController {
             movie.getEndDate(),
             movie.getPrice()));
     }
+
+    @DeleteMapping("/admin/movie/{id}")
+    public ResponseEntity<Object> deleteMovie(@PathVariable("id") long id) {
+        movieService.deleteMovie(id);
+        return ResponseEntity.ok().build();
+    }
 }
