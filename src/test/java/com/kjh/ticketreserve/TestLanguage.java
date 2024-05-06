@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class TestLanguage {
 
@@ -52,9 +51,7 @@ public class TestLanguage {
     }
 
     public static <T> ResponseEntity<T> getWithToken(TestRestTemplate client, String accessToken, String path, Class<T> type) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + accessToken);
-        return client.exchange(path, HttpMethod.GET, new HttpEntity<>(headers), type);
+        return client.exchange(path, HttpMethod.GET, new HttpEntity<>(getHttpHeaders(accessToken)), type);
     }
 
     public static <Request, Response> ResponseEntity<Response> postWithToken(
@@ -64,11 +61,36 @@ public class TestLanguage {
         Request request,
         ParameterizedTypeReference<Response> responseType) {
 
+        return executeWithToken(client, accessToken, path, HttpMethod.POST, request, responseType);
+    }
+
+    public static <Request, Response> ResponseEntity<Response> putWithToken(
+        TestRestTemplate client,
+        String accessToken,
+        String path,
+        Request request,
+        ParameterizedTypeReference<Response> responseType) {
+
+        return executeWithToken(client, accessToken, path, HttpMethod.PUT, request, responseType);
+    }
+
+    private static HttpHeaders getHttpHeaders(String accessToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
+        return headers;
+    }
+
+    private static <Request, Response> ResponseEntity<Response> executeWithToken(
+        TestRestTemplate client,
+        String accessToken,
+        String path,
+        HttpMethod method,
+        Request request,
+        ParameterizedTypeReference<Response> responseType
+    ) {
         return client.exchange(path,
-            HttpMethod.POST,
-            new HttpEntity<>(request, headers),
+            method,
+            new HttpEntity<>(request, getHttpHeaders(accessToken)),
             responseType);
     }
 

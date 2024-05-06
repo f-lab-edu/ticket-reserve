@@ -1,7 +1,7 @@
 package com.kjh.ticketreserve.controller;
 
 import com.kjh.ticketreserve.UserInfo;
-import com.kjh.ticketreserve.exception.BadRequestException;
+import com.kjh.ticketreserve.exception.NotFoundException;
 import com.kjh.ticketreserve.jpa.UserRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +24,6 @@ public class UserController {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userRepository.findByEmail(userDetails.getUsername())
             .map(u -> new UserInfo(u.getEmail()))
-            .orElseThrow(BadRequestException.NOT_FOUND::get);
+            .orElseThrow(NotFoundException.NOT_FOUND::get);
     }
 }

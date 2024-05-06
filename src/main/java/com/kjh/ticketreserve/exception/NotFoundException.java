@@ -2,13 +2,12 @@ package com.kjh.ticketreserve.exception;
 
 import org.springframework.http.HttpStatus;
 
-public enum BadRequestException {
-    DUPLICATED_EMAIL(HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다."),
-    BAD_CREDENTIALS(HttpStatus.BAD_REQUEST, "이메일 또는 비밀번호가 맞지 않습니다.");
+public enum NotFoundException {
+    NOT_FOUND(HttpStatus.NOT_FOUND, "데이터를 찾을 수 없습니다.");
 
     private final ResponseException responseException;
 
-    BadRequestException(HttpStatus httpStatus, String message) {
+    NotFoundException(HttpStatus httpStatus, String message) {
         this.responseException = new ResponseException(httpStatus, message);
     }
 
