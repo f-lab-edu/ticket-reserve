@@ -6,6 +6,7 @@ import com.kjh.ticketreserve.EmailFixture;
 import com.kjh.ticketreserve.exception.BadRequestException;
 import com.kjh.ticketreserve.ErrorResponse;
 import com.kjh.ticketreserve.security.JwtProvider;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +20,7 @@ import java.util.Objects;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DisplayName("POST /signin")
 public class PostTests {
 
     @ParameterizedTest

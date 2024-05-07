@@ -7,6 +7,7 @@ import com.kjh.ticketreserve.exception.BadRequestException;
 import com.kjh.ticketreserve.ErrorResponse;
 import com.kjh.ticketreserve.jpa.UserRepository;
 import com.kjh.ticketreserve.model.User;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +20,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DisplayName("POST /signup")
 public class PostTests {
 
     @ParameterizedTest

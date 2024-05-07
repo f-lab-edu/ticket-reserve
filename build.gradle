@@ -35,7 +35,7 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
-	testImplementation 'io.github.autoparams:autoparams:7.0.0'
+	testImplementation 'io.github.autoparams:autoparams:8.0.0'
 }
 
 tasks.named('test') {
