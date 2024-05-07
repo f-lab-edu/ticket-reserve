@@ -17,7 +17,7 @@ import static com.kjh.ticketreserve.TestLanguage.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DisplayName("POST /admin/movie")
+@DisplayName("POST /admin/movies")
 public class PostTests {
 
     @ParameterizedTest
@@ -33,7 +33,7 @@ public class PostTests {
         ResponseEntity<Map<String, Object>> response = postWithToken(
             client,
             accessToken,
-            "/admin/movie",
+            "/admin/movies",
             movieRequest,
             new ParameterizedTypeReference<>() {
             });

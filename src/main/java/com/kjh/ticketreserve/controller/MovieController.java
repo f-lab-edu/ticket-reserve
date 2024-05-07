@@ -20,7 +20,7 @@ public class MovieController {
         this.movieService = movieService;
     }
 
-    @PostMapping("/admin/movie")
+    @PostMapping("/admin/movies")
     public ResponseEntity<MovieResponse> createMovie(@RequestBody MovieRequest movieRequest) {
         Movie movie = new Movie();
         movie.setTitle(movieRequest.title());
@@ -37,7 +37,7 @@ public class MovieController {
             movie.getPrice()));
     }
 
-    @GetMapping("/admin/movie/{id}")
+    @GetMapping("/admin/movies/{id}")
     public ResponseEntity<MovieResponse> getMovie(@PathVariable("id") long id) {
         Movie movie = movieRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND::get);
         return ResponseEntity.status(200).body(new MovieResponse(
@@ -48,7 +48,7 @@ public class MovieController {
             movie.getPrice()));
     }
     
-    @PutMapping("/admin/movie/{id}")
+    @PutMapping("/admin/movies/{id}")
     public ResponseEntity<MovieResponse> updateMovie(@PathVariable("id") long id,
                                                      @RequestBody MovieRequest movieRequest) {
         Movie movie = movieService.updateMovie(id, movieRequest);
@@ -60,7 +60,7 @@ public class MovieController {
             movie.getPrice()));
     }
 
-    @DeleteMapping("/admin/movie/{id}")
+    @DeleteMapping("/admin/movies/{id}")
     public ResponseEntity<Object> deleteMovie(@PathVariable("id") long id) {
         movieService.deleteMovie(id);
         return ResponseEntity.ok().build();

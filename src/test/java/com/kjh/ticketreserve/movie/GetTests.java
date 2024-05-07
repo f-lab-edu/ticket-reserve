@@ -15,7 +15,7 @@ import static com.kjh.ticketreserve.TestLanguage.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DisplayName("GET /admin/movie")
+@DisplayName("GET /admin/movies")
 public class GetTests {
 
     @ParameterizedTest
@@ -32,7 +32,7 @@ public class GetTests {
         ResponseEntity<MovieResponse> response = getWithToken(
             client,
             accessToken,
-            "/admin/movie/" + id,
+            "/admin/movies/" + id,
             MovieResponse.class);
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);

@@ -16,7 +16,7 @@ import static com.kjh.ticketreserve.TestLanguage.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DisplayName("PUT /admin/movie")
+@DisplayName("PUT /admin/movies")
 public class PutTests {
 
     @ParameterizedTest
@@ -35,7 +35,7 @@ public class PutTests {
         // Act
         ResponseEntity<MovieResponse> response = putWithToken(client,
             accessToken,
-            "/admin/movie/" + id,
+            "/admin/movies/" + id,
             updateMovieRequest,
             new ParameterizedTypeReference<>() {
             });
@@ -66,7 +66,7 @@ public class PutTests {
         // Act
         ResponseEntity<MovieResponse> response = putWithToken(client,
             accessToken,
-            "/admin/movie/" + id,
+            "/admin/movies/" + id,
             updateMovieRequest,
             new ParameterizedTypeReference<>() {
             });

@@ -14,7 +14,7 @@ import static com.kjh.ticketreserve.TestLanguage.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DisplayName("DELETE /admin/movie")
+@DisplayName("DELETE /admin/movies")
 public class DeleteTests {
 
     @ParameterizedTest
@@ -32,7 +32,7 @@ public class DeleteTests {
         // Act
         ResponseEntity<Object> response = deleteWithToken(client,
             accessToken,
-            "/admin/movie/" + id,
+            "/admin/movies/" + id,
             Object.class);
 
         // Assert
@@ -50,12 +50,12 @@ public class DeleteTests {
         signup(client, credentials);
         String accessToken = signin(client, credentials);
         long id = createMovie(client, accessToken, movieRequest);
-        deleteWithToken(client, accessToken, "/admin/movie/" + id, Void.class);
+        deleteWithToken(client, accessToken, "/admin/movies/" + id, Void.class);
 
         // Act
         ResponseEntity<Object> response = deleteWithToken(client,
             accessToken,
-            "/admin/movie/" + id,
+            "/admin/movies/" + id,
             Object.class);
 
         // Assert

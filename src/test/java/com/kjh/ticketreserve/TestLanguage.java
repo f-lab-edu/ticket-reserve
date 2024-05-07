@@ -113,7 +113,7 @@ public class TestLanguage {
         ResponseEntity<MovieResponse> response = postWithToken(
             client,
             accessToken,
-            "/admin/movie",
+            "/admin/movies",
             movieRequest,
             new ParameterizedTypeReference<>() {
             });

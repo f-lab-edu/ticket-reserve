@@ -14,7 +14,7 @@ import static com.kjh.ticketreserve.TestLanguage.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DisplayName("GET /user/my/info")
+@DisplayName("GET /users/my/info")
 public class GetTests {
 
     @ParameterizedTest
@@ -29,7 +29,7 @@ public class GetTests {
         String accessToken = signin(client, email, password);
 
         // Act
-        ResponseEntity<UserInfo> response = getWithToken(client, accessToken, "/user/my/info", UserInfo.class);
+        ResponseEntity<UserInfo> response = getWithToken(client, accessToken, "/users/my/info", UserInfo.class);
 
         // Assert
         assertThat(response.getStatusCode().value()).isEqualTo(200);
@@ -47,7 +47,7 @@ public class GetTests {
         String accessToken = signin(client, email, password);
 
         // Act
-        ResponseEntity<UserInfo> response = getWithToken(client, accessToken, "/user/my/info", UserInfo.class);
+        ResponseEntity<UserInfo> response = getWithToken(client, accessToken, "/users/my/info", UserInfo.class);
 
         // Assert
         assertThat(response.getBody()).hasFieldOrPropertyWithValue("email", email.value());
