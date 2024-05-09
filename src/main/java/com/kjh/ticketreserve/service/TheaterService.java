@@ -33,4 +33,10 @@ public class TheaterService {
         theater.setAddress(theaterRequest.address());
         return theater;
     }
+
+    @Transactional
+    public void deleteTheater(long id) {
+        Theater theater = theaterRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND::get);
+        theaterRepository.delete(theater);
+    }
 }

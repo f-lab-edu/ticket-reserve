@@ -48,4 +48,10 @@ public class TheaterController {
             theater.getName(),
             theater.getAddress()));
     }
+
+    @DeleteMapping("/admin/theaters/{id}")
+    public ResponseEntity<TheaterResponse> deleteTheater(@PathVariable("id") Long id) {
+        theaterService.deleteTheater(id);
+        return ResponseEntity.ok().build();
+    }
 }
