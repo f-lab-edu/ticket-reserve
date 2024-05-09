@@ -28,7 +28,7 @@ public class GetTests {
         // Arrange
         signup(client, credentials);
         String accessToken = signin(client, credentials);
-        long id = createTheater(theaterRequest, client, accessToken);
+        long id = createTheater(client, accessToken, theaterRequest);
 
         // Act
         ResponseEntity<TheaterResponse> response = getWithToken(client,

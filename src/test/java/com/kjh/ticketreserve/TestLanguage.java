@@ -129,7 +129,11 @@ public class TestLanguage {
     }
 
     @SuppressWarnings("DataFlowIssue")
-    public static long createTheater(TheaterRequest theaterRequest, TestRestTemplate client, String accessToken) {
+    public static long createTheater(
+        TestRestTemplate client,
+        String accessToken,
+        TheaterRequest theaterRequest) {
+
         ResponseEntity<TheaterResponse> response = postWithToken(client,
             accessToken,
             "/admin/theaters",

@@ -38,4 +38,14 @@ public class TheaterController {
             theater.getName(),
             theater.getAddress()));
     }
+
+    @PutMapping("/admin/theaters/{id}")
+    public ResponseEntity<TheaterResponse> updateTheater(@PathVariable("id") Long id,
+                                                         @RequestBody TheaterRequest theaterRequest) {
+        Theater theater = theaterService.updateTheater(id, theaterRequest);
+        return ResponseEntity.status(200).body(new TheaterResponse(
+            theater.getId(),
+            theater.getName(),
+            theater.getAddress()));
+    }
 }
