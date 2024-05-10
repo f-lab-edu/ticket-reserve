@@ -1,9 +1,6 @@
 package com.kjh.ticketreserve.controller;
 
-import com.kjh.ticketreserve.MovieResponse;
-import com.kjh.ticketreserve.ShowtimeRequest;
-import com.kjh.ticketreserve.ShowtimeResponse;
-import com.kjh.ticketreserve.TheaterResponse;
+import com.kjh.ticketreserve.*;
 import com.kjh.ticketreserve.model.Movie;
 import com.kjh.ticketreserve.model.Showtime;
 import com.kjh.ticketreserve.model.Theater;
@@ -47,6 +44,17 @@ public class ShowtimeController {
     @GetMapping("/showtimes/{id}")
     public ResponseEntity<ShowtimeResponse> getShowtime(@PathVariable long id) {
         Showtime showtime = showtimeService.getShowtime(id);
+        return ResponseEntity.status(200).body(new ShowtimeResponse(
+            showtime.getId(),
+            new MovieResponse(showtime.getMovie()),
+            new TheaterResponse(showtime.getTheater()),
+            showtime.getShowtime()));
+    }
+
+    @PutMapping("/admin/showtimes/{id}")
+    public ResponseEntity<ShowtimeResponse> updateShowtime(@PathVariable long id,
+                                                           @RequestBody ShowtimeUpdateRequest showtimeUpdateRequest) {
+        Showtime showtime = showtimeService.updateShowtime(id, showtimeUpdateRequest);
         return ResponseEntity.status(200).body(new ShowtimeResponse(
             showtime.getId(),
             new MovieResponse(showtime.getMovie()),

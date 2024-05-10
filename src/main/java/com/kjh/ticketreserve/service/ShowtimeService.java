@@ -1,5 +1,6 @@
 package com.kjh.ticketreserve.service;
 
+import com.kjh.ticketreserve.ShowtimeUpdateRequest;
 import com.kjh.ticketreserve.exception.BadRequestException;
 import com.kjh.ticketreserve.exception.NotFoundException;
 import com.kjh.ticketreserve.jpa.ShowtimeRepository;
@@ -30,5 +31,12 @@ public class ShowtimeService {
     @Transactional(readOnly = true)
     public Showtime getShowtime(long id) {
         return showtimeRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_SHOWTIME::get);
+    }
+
+    @Transactional
+    public Showtime updateShowtime(long id, ShowtimeUpdateRequest showtimeUpdateRequest) {
+        Showtime showtime = showtimeRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_SHOWTIME::get);
+        showtime.setShowtime(showtimeUpdateRequest.showtime());
+        return showtime;
     }
 }
