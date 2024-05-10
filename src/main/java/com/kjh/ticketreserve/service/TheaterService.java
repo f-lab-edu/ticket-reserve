@@ -26,12 +26,12 @@ public class TheaterService {
 
     @Transactional(readOnly = true)
     public Theater getTheater(long id) {
-        return theaterRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND::get);
+        return theaterRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_THEATER::get);
     }
 
     @Transactional
     public Theater updateTheater(long id, TheaterRequest theaterRequest) {
-        Theater theater = theaterRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND::get);
+        Theater theater = theaterRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_THEATER::get);
         theater.setName(theaterRequest.name());
         theater.setAddress(theaterRequest.address());
         return theater;
@@ -39,7 +39,7 @@ public class TheaterService {
 
     @Transactional
     public void deleteTheater(long id) {
-        Theater theater = theaterRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND::get);
+        Theater theater = theaterRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_THEATER::get);
         theaterRepository.delete(theater);
     }
 
