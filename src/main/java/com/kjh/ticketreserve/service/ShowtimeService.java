@@ -1,12 +1,17 @@
 package com.kjh.ticketreserve.service;
 
+import com.kjh.ticketreserve.ShowtimeSearchCondition;
 import com.kjh.ticketreserve.ShowtimeUpdateRequest;
 import com.kjh.ticketreserve.exception.BadRequestException;
 import com.kjh.ticketreserve.exception.NotFoundException;
 import com.kjh.ticketreserve.jpa.ShowtimeRepository;
 import com.kjh.ticketreserve.model.Showtime;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 
 @Service
 public class ShowtimeService {
@@ -44,5 +49,11 @@ public class ShowtimeService {
     public void deleteShowtime(long id) {
         Showtime showtime = showtimeRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_SHOWTIME::get);
         showtimeRepository.delete(showtime);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Showtime> searchShowtimes(int pageNumber, int pageSize, Long movieId, Long theaterId, LocalDate date) {
+        ShowtimeSearchCondition searchCondition = new ShowtimeSearchCondition(movieId, theaterId, date);
+        return showtimeRepository.findAllBySearchCondition(searchCondition, PageRequest.of(pageNumber, pageSize));
     }
 }

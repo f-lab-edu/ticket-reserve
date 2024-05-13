@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
 
-public interface ShowtimeRepository extends JpaRepository<Showtime, Long> {
+public interface ShowtimeRepository extends JpaRepository<Showtime, Long>, ShowtimeCustomRepository {
 
     boolean existsByMovieIdAndTheaterIdAndShowtime(Long movieId, Long theaterId, LocalDateTime showtime);
 }

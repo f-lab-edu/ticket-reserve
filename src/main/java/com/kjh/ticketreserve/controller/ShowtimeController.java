@@ -7,8 +7,11 @@ import com.kjh.ticketreserve.model.Theater;
 import com.kjh.ticketreserve.service.MovieService;
 import com.kjh.ticketreserve.service.ShowtimeService;
 import com.kjh.ticketreserve.service.TheaterService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 public class ShowtimeController {
@@ -66,5 +69,21 @@ public class ShowtimeController {
     public ResponseEntity<Object> deleteShowtime(@PathVariable long id) {
         showtimeService.deleteShowtime(id);
         return ResponseEntity.status(200).build();
+    }
+
+    @GetMapping("/showtimes")
+    public ResponseEntity<PageResponse<ShowtimeResponse>> searchShowtimes(
+        @RequestParam int pageNumber,
+        @RequestParam int pageSize,
+        @RequestParam(required = false) Long movieId,
+        @RequestParam(required = false) Long theaterId,
+        @RequestParam(required = false) LocalDate date
+    ) {
+        Page<Showtime> showtimePage = showtimeService.searchShowtimes(pageNumber, pageSize, movieId, theaterId, date);
+        return ResponseEntity.status(200).body(new PageResponse<>(showtimePage,
+            s -> new ShowtimeResponse(s.getId(),
+                new MovieResponse(s.getMovie()),
+                new TheaterResponse(s.getTheater()),
+                s.getShowtime())));
     }
 }
