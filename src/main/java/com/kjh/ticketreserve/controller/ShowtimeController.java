@@ -61,4 +61,10 @@ public class ShowtimeController {
             new TheaterResponse(showtime.getTheater()),
             showtime.getShowtime()));
     }
+
+    @DeleteMapping("/admin/showtimes/{id}")
+    public ResponseEntity<Object> deleteShowtime(@PathVariable long id) {
+        showtimeService.deleteShowtime(id);
+        return ResponseEntity.status(200).build();
+    }
 }

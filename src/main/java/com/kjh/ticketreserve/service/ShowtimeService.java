@@ -39,4 +39,10 @@ public class ShowtimeService {
         showtime.setShowtime(showtimeUpdateRequest.showtime());
         return showtime;
     }
+
+    @Transactional
+    public void deleteShowtime(long id) {
+        Showtime showtime = showtimeRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_SHOWTIME::get);
+        showtimeRepository.delete(showtime);
+    }
 }
