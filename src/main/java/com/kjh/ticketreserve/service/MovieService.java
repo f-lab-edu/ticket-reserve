@@ -1,11 +1,16 @@
 package com.kjh.ticketreserve.service;
 
 import com.kjh.ticketreserve.MovieRequest;
+import com.kjh.ticketreserve.MovieSearchCondition;
 import com.kjh.ticketreserve.exception.NotFoundException;
 import com.kjh.ticketreserve.jpa.MovieRepository;
 import com.kjh.ticketreserve.model.Movie;
-import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 public class MovieService {
@@ -14,6 +19,11 @@ public class MovieService {
 
     public MovieService(MovieRepository movieRepository) {
         this.movieRepository = movieRepository;
+    }
+
+    @Transactional(readOnly = true)
+    public Movie getMovie(long id) {
+        return movieRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND::get);
     }
 
     @Transactional
@@ -30,5 +40,11 @@ public class MovieService {
     public void deleteMovie(long id) {
         Movie movie = movieRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND::get);
         movieRepository.delete(movie);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Movie> searchMovies(int pageNumber, int pageSize, String title, LocalDateTime screeningDate) {
+        MovieSearchCondition searchCondition = new MovieSearchCondition(title, screeningDate);
+        return movieRepository.findAllBySearchCondition(searchCondition, PageRequest.of(pageNumber, pageSize));
     }
 }

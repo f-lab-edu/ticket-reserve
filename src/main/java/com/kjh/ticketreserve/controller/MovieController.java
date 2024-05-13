@@ -1,13 +1,14 @@
 package com.kjh.ticketreserve.controller;
 
-import com.kjh.ticketreserve.MovieRequest;
-import com.kjh.ticketreserve.MovieResponse;
-import com.kjh.ticketreserve.exception.NotFoundException;
+import com.kjh.ticketreserve.*;
 import com.kjh.ticketreserve.jpa.MovieRepository;
 import com.kjh.ticketreserve.model.Movie;
 import com.kjh.ticketreserve.service.MovieService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RestController
 public class MovieController {
@@ -39,7 +40,7 @@ public class MovieController {
 
     @GetMapping("/admin/movies/{id}")
     public ResponseEntity<MovieResponse> getMovie(@PathVariable("id") long id) {
-        Movie movie = movieRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND::get);
+        Movie movie = movieService.getMovie(id);
         return ResponseEntity.status(200).body(new MovieResponse(
             movie.getId(),
             movie.getTitle(),
@@ -64,5 +65,17 @@ public class MovieController {
     public ResponseEntity<Object> deleteMovie(@PathVariable("id") long id) {
         movieService.deleteMovie(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/admin/movies")
+    public ResponseEntity<PageResponse<MovieResponse>> searchMovies(
+        @RequestParam int pageNumber,
+        @RequestParam int pageSize,
+        @RequestParam(required = false) String title,
+        @RequestParam(required = false) LocalDateTime screeningDate
+    ) {
+        Page<Movie> moviePage = movieService.searchMovies(pageNumber, pageSize, title, screeningDate);
+        return ResponseEntity.status(200).body(new PageResponse<>(moviePage,
+            m -> new MovieResponse(m.getId(), m.getTitle(), m.getStartDate(), m.getEndDate(), m.getPrice())));
     }
 }

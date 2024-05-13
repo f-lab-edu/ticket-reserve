@@ -57,6 +57,13 @@ public class TestLanguage {
         return client.exchange(path, HttpMethod.GET, new HttpEntity<>(getHttpHeaders(accessToken)), type);
     }
 
+    public static <T> ResponseEntity<T> getWithToken(TestRestTemplate client,
+                                                     String accessToken,
+                                                     String path,
+                                                     ParameterizedTypeReference<T> type) {
+        return client.exchange(path, HttpMethod.GET, new HttpEntity<>(getHttpHeaders(accessToken)), type);
+    }
+
     public static <Request, Response> ResponseEntity<Response> postWithToken(
         TestRestTemplate client,
         String accessToken,
