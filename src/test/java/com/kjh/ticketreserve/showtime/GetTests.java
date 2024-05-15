@@ -26,7 +26,7 @@ public class GetTests {
         Credentials credentials,
         MovieRequest movieRequest,
         TheaterRequest theaterRequest,
-        LocalDateTime showtime,
+        LocalDateTime showDatetime,
         @Autowired TestRestTemplate client
     ) {
         // Arrange
@@ -34,7 +34,7 @@ public class GetTests {
         String accessToken = signin(client, credentials);
         long movieId = createMovie(client, accessToken, movieRequest);
         long theaterId = createTheater(client, accessToken, theaterRequest);
-        long id = createShowtime(client, accessToken, new ShowtimeRequest(movieId, theaterId, showtime));
+        long id = createShowtime(client, accessToken, new ShowtimeRequest(movieId, theaterId, showDatetime));
 
         // Act
         ResponseEntity<ShowtimeResponse> response = getWithToken(client,
@@ -49,7 +49,7 @@ public class GetTests {
         assertThat(body.id()).isEqualTo(id);
         assertThat(body.movie().id()).isEqualTo(movieId);
         assertThat(body.theater().id()).isEqualTo(theaterId);
-        assertThat(body.showtime()).isEqualToIgnoringNanos(showtime);
+        assertThat(body.showDatetime()).isEqualToIgnoringNanos(showDatetime);
     }
 
     @ParameterizedTest
@@ -58,7 +58,7 @@ public class GetTests {
         Credentials credentials,
         MovieRequest movieRequest,
         TheaterRequest theaterRequest,
-        List<LocalDateTime> showtimes,
+        List<LocalDateTime> showDatetimes,
         @Autowired TestRestTemplate client
     ) {
         // Arrange
@@ -66,21 +66,21 @@ public class GetTests {
         String accessToken = signin(client, credentials);
         long movieId = createMovie(client, accessToken, movieRequest);
         long theaterId = createTheater(client, accessToken, theaterRequest);
-        for (LocalDateTime showtime : showtimes) {
+        for (LocalDateTime showtime : showDatetimes) {
             createShowtime(client, accessToken, new ShowtimeRequest(movieId, theaterId, showtime));
         }
 
         // Act
         ResponseEntity<PageResponse<ShowtimeResponse>> response = getWithToken(client,
             accessToken,
-            "/showtimes?pageNumber=0&pageSize=" + showtimes.size(),
+            "/showtimes?pageNumber=0&pageSize=" + showDatetimes.size(),
             new ParameterizedTypeReference<>() {
             });
 
         // Assert
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().content().size()).isEqualTo(showtimes.size());
+        assertThat(response.getBody().content().size()).isEqualTo(showDatetimes.size());
     }
 
     @ParameterizedTest
@@ -89,14 +89,14 @@ public class GetTests {
         Credentials credentials,
         MovieRequest movieRequest,
         TheaterRequest theaterRequest,
-        List<LocalDateTime> showtimes,
+        List<LocalDateTime> showDatetimes,
         @Autowired TestRestTemplate client
     ) {
         // Arrange
         signup(client, credentials);
         String accessToken = signin(client, credentials);
         List<ShowtimeRequest> showtimeRequests = new ArrayList<>();
-        for (LocalDateTime showtime : showtimes) {
+        for (LocalDateTime showtime : showDatetimes) {
             long movieId = createMovie(client, accessToken, movieRequest);
             long theaterId = createTheater(client, accessToken, theaterRequest);
             ShowtimeRequest showtimeRequest = new ShowtimeRequest(movieId, theaterId, showtime);
@@ -108,7 +108,7 @@ public class GetTests {
         ShowtimeRequest showtimeToFind = showtimeRequests.get(0);
         ResponseEntity<PageResponse<ShowtimeResponse>> response = getWithToken(client,
             accessToken,
-            "/showtimes?pageNumber=0&pageSize=" + showtimes.size() + "&movieId=" + showtimeToFind.movieId(),
+            "/showtimes?pageNumber=0&pageSize=" + showDatetimes.size() + "&movieId=" + showtimeToFind.movieId(),
             new ParameterizedTypeReference<>() {
             });
 
@@ -126,14 +126,14 @@ public class GetTests {
         Credentials credentials,
         MovieRequest movieRequest,
         TheaterRequest theaterRequest,
-        List<LocalDateTime> showtimes,
+        List<LocalDateTime> showDatetimes,
         @Autowired TestRestTemplate client
     ) {
         // Arrange
         signup(client, credentials);
         String accessToken = signin(client, credentials);
         List<ShowtimeRequest> showtimeRequests = new ArrayList<>();
-        for (LocalDateTime showtime : showtimes) {
+        for (LocalDateTime showtime : showDatetimes) {
             long movieId = createMovie(client, accessToken, movieRequest);
             long theaterId = createTheater(client, accessToken, theaterRequest);
             ShowtimeRequest showtimeRequest = new ShowtimeRequest(movieId, theaterId, showtime);
@@ -145,7 +145,7 @@ public class GetTests {
         ShowtimeRequest showtimeToFind = showtimeRequests.get(0);
         ResponseEntity<PageResponse<ShowtimeResponse>> response = getWithToken(client,
             accessToken,
-            "/showtimes?pageNumber=0&pageSize=" + showtimes.size() + "&theaterId=" + showtimeToFind.theaterId(),
+            "/showtimes?pageNumber=0&pageSize=" + showDatetimes.size() + "&theaterId=" + showtimeToFind.theaterId(),
             new ParameterizedTypeReference<>() {
             });
 
@@ -163,14 +163,14 @@ public class GetTests {
         Credentials credentials,
         MovieRequest movieRequest,
         TheaterRequest theaterRequest,
-        List<LocalDateTime> showtimes,
+        List<LocalDateTime> showDatetimes,
         @Autowired TestRestTemplate client
     ) {
         // Arrange
         signup(client, credentials);
         String accessToken = signin(client, credentials);
         List<ShowtimeRequest> showtimeRequests = new ArrayList<>();
-        for (LocalDateTime showtime : showtimes) {
+        for (LocalDateTime showtime : showDatetimes) {
             long movieId = createMovie(client, accessToken, movieRequest);
             long theaterId = createTheater(client, accessToken, theaterRequest);
             ShowtimeRequest showtimeRequest = new ShowtimeRequest(movieId, theaterId, showtime);
@@ -182,8 +182,8 @@ public class GetTests {
         ShowtimeRequest showtimeToFind = showtimeRequests.get(0);
         ResponseEntity<PageResponse<ShowtimeResponse>> response = getWithToken(client,
             accessToken,
-            "/showtimes?pageNumber=0&pageSize=" + showtimes.size() +
-                "&date=" + showtimeToFind.showtime().toLocalDate(),
+            "/showtimes?pageNumber=0&pageSize=" + showDatetimes.size() +
+                "&date=" + showtimeToFind.showDatetime().toLocalDate(),
             new ParameterizedTypeReference<>() {
             });
 
@@ -192,6 +192,6 @@ public class GetTests {
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody().content().size()).isEqualTo(1);
         ShowtimeResponse found = response.getBody().content().get(0);
-        assertThat(found.showtime()).isEqualTo(showtimeToFind.showtime());
+        assertThat(found.showDatetime()).isEqualTo(showtimeToFind.showDatetime());
     }
 }

@@ -24,8 +24,8 @@ public class PutTests {
         Credentials credentials,
         MovieRequest movieRequest,
         TheaterRequest theaterRequest,
-        LocalDateTime createShowtime,
-        LocalDateTime updateShowtime,
+        LocalDateTime createShowDatetime,
+        LocalDateTime updateShowDatetime,
         @Autowired TestRestTemplate client
     ) {
         // Arrange
@@ -33,10 +33,10 @@ public class PutTests {
         String accessToken = signin(client, credentials);
         long movieId = createMovie(client, accessToken, movieRequest);
         long theaterId = createTheater(client, accessToken, theaterRequest);
-        long id = createShowtime(client, accessToken, new ShowtimeRequest(movieId, theaterId, createShowtime));
+        long id = createShowtime(client, accessToken, new ShowtimeRequest(movieId, theaterId, createShowDatetime));
 
         // Act
-        ShowtimeUpdateRequest showtimeUpdateRequest = new ShowtimeUpdateRequest(updateShowtime);
+        ShowtimeUpdateRequest showtimeUpdateRequest = new ShowtimeUpdateRequest(updateShowDatetime);
         ResponseEntity<ShowtimeResponse> response = putWithToken(client,
             accessToken,
             "/admin/showtimes/" + id,
@@ -51,7 +51,7 @@ public class PutTests {
         assertThat(body.id()).isEqualTo(id);
         assertThat(body.movie().id()).isEqualTo(movieId);
         assertThat(body.theater().id()).isEqualTo(theaterId);
-        assertThat(body.showtime()).isEqualTo(showtimeUpdateRequest.showtime());
+        assertThat(body.showDatetime()).isEqualTo(showtimeUpdateRequest.showDatetime());
     }
 
     @ParameterizedTest

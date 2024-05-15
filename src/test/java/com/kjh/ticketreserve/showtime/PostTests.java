@@ -24,7 +24,7 @@ public class PostTests {
         Credentials credentials,
         MovieRequest movieRequest,
         TheaterRequest theaterRequest,
-        LocalDateTime showtime,
+        LocalDateTime showDatetime,
         @Autowired TestRestTemplate client
     ) {
         // Arrange
@@ -32,7 +32,7 @@ public class PostTests {
         String accessToken = signin(client, credentials);
         long movieId = createMovie(client, accessToken, movieRequest);
         long theaterId = createTheater(client, accessToken, theaterRequest);
-        ShowtimeRequest showtimeRequest = new ShowtimeRequest(movieId, theaterId, showtime);
+        ShowtimeRequest showtimeRequest = new ShowtimeRequest(movieId, theaterId, showDatetime);
 
         // Act
         ResponseEntity<ShowtimeResponse> response = postWithToken(client,
@@ -53,14 +53,14 @@ public class PostTests {
         Credentials credentials,
         long movieId,
         TheaterRequest theaterRequest,
-        LocalDateTime showtime,
+        LocalDateTime showDatetime,
         @Autowired TestRestTemplate client
     ) {
         // Arrange
         signup(client, credentials);
         String accessToken = signin(client, credentials);
         long theaterId = createTheater(client, accessToken, theaterRequest);
-        ShowtimeRequest showtimeRequest = new ShowtimeRequest(movieId, theaterId, showtime);
+        ShowtimeRequest showtimeRequest = new ShowtimeRequest(movieId, theaterId, showDatetime);
 
         // Act
         ResponseEntity<ShowtimeResponse> response = postWithToken(client,
@@ -80,14 +80,14 @@ public class PostTests {
         Credentials credentials,
         MovieRequest movieRequest,
         long theaterId,
-        LocalDateTime showtime,
+        LocalDateTime showDatetime,
         @Autowired TestRestTemplate client
     ) {
         // Arrange
         signup(client, credentials);
         String accessToken = signin(client, credentials);
         long movieId = createMovie(client, accessToken, movieRequest);
-        ShowtimeRequest showtimeRequest = new ShowtimeRequest(movieId, theaterId, showtime);
+        ShowtimeRequest showtimeRequest = new ShowtimeRequest(movieId, theaterId, showDatetime);
 
         // Act
         ResponseEntity<ShowtimeResponse> response = postWithToken(client,
@@ -107,7 +107,7 @@ public class PostTests {
         Credentials credentials,
         MovieRequest movieRequest,
         TheaterRequest theaterRequest,
-        LocalDateTime showtime,
+        LocalDateTime showDatetime,
         @Autowired TestRestTemplate client
     ) {
         // Arrange
@@ -115,7 +115,7 @@ public class PostTests {
         String accessToken = signin(client, credentials);
         long movieId = createMovie(client, accessToken, movieRequest);
         long theaterId = createTheater(client, accessToken, theaterRequest);
-        ShowtimeRequest showtimeRequest = new ShowtimeRequest(movieId, theaterId, showtime);
+        ShowtimeRequest showtimeRequest = new ShowtimeRequest(movieId, theaterId, showDatetime);
         createShowtime(client, accessToken, showtimeRequest);
 
         // Act

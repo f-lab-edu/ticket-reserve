@@ -23,27 +23,27 @@ public class ShowtimeRepositoryImpl implements ShowtimeCustomRepository {
     @Override
     public Page<Showtime> findAllBySearchCondition(ShowtimeSearchCondition searchCondition, Pageable pageable) {
         JPAQuery<Showtime> query = queryFactory
-            .select(showtime1)
-            .from(showtime1)
-            .join(showtime1.movie, movie).fetchJoin()
-            .join(showtime1.theater, theater).fetchJoin()
+            .select(showtime)
+            .from(showtime)
+            .join(showtime.movie, movie).fetchJoin()
+            .join(showtime.theater, theater).fetchJoin()
             .where(
                 ifNullNone(movie.id::eq, searchCondition.movieId()),
                 ifNullNone(theater.id::eq, searchCondition.theaterId()),
-                ifNullNone(showtime1.showtime::goe, searchCondition.showtimeFrom()),
-                ifNullNone(showtime1.showtime::lt, searchCondition.showtimeTo())
+                ifNullNone(showtime.showDatetime::goe, searchCondition.showDatetimeFrom()),
+                ifNullNone(showtime.showDatetime::lt, searchCondition.showDatetimeTo())
             )
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize());
 
         JPAQuery<Long> countQuery = queryFactory
             .select(Wildcard.count)
-            .from(showtime1)
+            .from(showtime)
             .where(
-                ifNullNone(showtime1.movie.id::eq, searchCondition.movieId()),
-                ifNullNone(showtime1.theater.id::eq, searchCondition.theaterId()),
-                ifNullNone(showtime1.showtime::goe, searchCondition.showtimeFrom()),
-                ifNullNone(showtime1.showtime::lt, searchCondition.showtimeTo())
+                ifNullNone(showtime.movie.id::eq, searchCondition.movieId()),
+                ifNullNone(showtime.theater.id::eq, searchCondition.theaterId()),
+                ifNullNone(showtime.showDatetime::goe, searchCondition.showDatetimeFrom()),
+                ifNullNone(showtime.showDatetime::lt, searchCondition.showDatetimeTo())
             )
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize());

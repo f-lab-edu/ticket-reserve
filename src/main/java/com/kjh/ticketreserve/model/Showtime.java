@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Table(
-    uniqueConstraints = @UniqueConstraint(columnNames = { "movie_id", "theater_id", "showtime" }))
+    uniqueConstraints = @UniqueConstraint(columnNames = { "movie_id", "theater_id", "show_datetime" }))
 @NoArgsConstructor
 public class Showtime {
 
@@ -27,5 +27,5 @@ public class Showtime {
     @JoinColumn(name = "theater_id", nullable = false)
     private Theater theater;
 
-    private LocalDateTime showtime;
+    private LocalDateTime showDatetime;
 }

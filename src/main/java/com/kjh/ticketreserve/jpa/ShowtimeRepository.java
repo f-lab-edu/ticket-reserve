@@ -7,5 +7,5 @@ import java.time.LocalDateTime;
 
 public interface ShowtimeRepository extends JpaRepository<Showtime, Long>, ShowtimeCustomRepository {
 
-    boolean existsByMovieIdAndTheaterIdAndShowtime(Long movieId, Long theaterId, LocalDateTime showtime);
+    boolean existsByMovieIdAndTheaterIdAndShowDatetime(Long movieId, Long theaterId, LocalDateTime showDatetime);
 }

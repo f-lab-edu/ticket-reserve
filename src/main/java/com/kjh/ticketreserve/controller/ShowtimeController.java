@@ -35,13 +35,13 @@ public class ShowtimeController {
         Showtime showtime = new Showtime();
         showtime.setMovie(movie);
         showtime.setTheater(theater);
-        showtime.setShowtime(showtimeRequest.showtime());
+        showtime.setShowDatetime(showtimeRequest.showDatetime());
         showtimeService.createShowtime(showtime);
         return ResponseEntity.status(201).body(new ShowtimeResponse(
             showtime.getId(),
             new MovieResponse(movie),
             new TheaterResponse(theater),
-            showtime.getShowtime()));
+            showtime.getShowDatetime()));
     }
 
     @GetMapping("/showtimes/{id}")
@@ -51,7 +51,7 @@ public class ShowtimeController {
             showtime.getId(),
             new MovieResponse(showtime.getMovie()),
             new TheaterResponse(showtime.getTheater()),
-            showtime.getShowtime()));
+            showtime.getShowDatetime()));
     }
 
     @PutMapping("/admin/showtimes/{id}")
@@ -62,7 +62,7 @@ public class ShowtimeController {
             showtime.getId(),
             new MovieResponse(showtime.getMovie()),
             new TheaterResponse(showtime.getTheater()),
-            showtime.getShowtime()));
+            showtime.getShowDatetime()));
     }
 
     @DeleteMapping("/admin/showtimes/{id}")
@@ -84,6 +84,6 @@ public class ShowtimeController {
             s -> new ShowtimeResponse(s.getId(),
                 new MovieResponse(s.getMovie()),
                 new TheaterResponse(s.getTheater()),
-                s.getShowtime())));
+                s.getShowDatetime())));
     }
 }

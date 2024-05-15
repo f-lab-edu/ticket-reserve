@@ -23,7 +23,7 @@ public class DeleteTests {
         Credentials credentials,
         MovieRequest movieRequest,
         TheaterRequest theaterRequest,
-        LocalDateTime showtime,
+        LocalDateTime showDatetime,
         @Autowired TestRestTemplate client
     ) {
         // Arrange
@@ -31,7 +31,7 @@ public class DeleteTests {
         String accessToken = signin(client, credentials);
         long movieId = createMovie(client, accessToken, movieRequest);
         long theaterId = createTheater(client, accessToken, theaterRequest);
-        long id = createShowtime(client, accessToken, new ShowtimeRequest(movieId, theaterId, showtime));
+        long id = createShowtime(client, accessToken, new ShowtimeRequest(movieId, theaterId, showDatetime));
 
         // Act
         ResponseEntity<Object> response = deleteWithToken(client,
@@ -49,7 +49,7 @@ public class DeleteTests {
         Credentials credentials,
         MovieRequest movieRequest,
         TheaterRequest theaterRequest,
-        LocalDateTime showtime,
+        LocalDateTime showDatetime,
         @Autowired TestRestTemplate client
     ) {
         // Arrange
@@ -57,7 +57,7 @@ public class DeleteTests {
         String accessToken = signin(client, credentials);
         long movieId = createMovie(client, accessToken, movieRequest);
         long theaterId = createTheater(client, accessToken, theaterRequest);
-        long id = createShowtime(client, accessToken, new ShowtimeRequest(movieId, theaterId, showtime));
+        long id = createShowtime(client, accessToken, new ShowtimeRequest(movieId, theaterId, showDatetime));
         deleteWithToken(client, accessToken, "/admin/showtimes/" + id, Void.class);
 
         // Act

@@ -3,7 +3,12 @@ package com.kjh.ticketreserve;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public record ShowtimeSearchCondition(Long movieId, Long theaterId, LocalDateTime showtimeFrom, LocalDateTime showtimeTo) {
+public record ShowtimeSearchCondition(
+    Long movieId,
+    Long theaterId,
+    LocalDateTime showDatetimeFrom,
+    LocalDateTime showDatetimeTo
+) {
 
     public ShowtimeSearchCondition(Long movieId, Long theaterId, LocalDate date) {
         this(movieId,

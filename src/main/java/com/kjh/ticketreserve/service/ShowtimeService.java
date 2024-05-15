@@ -24,9 +24,9 @@ public class ShowtimeService {
 
     @Transactional
     public void createShowtime(Showtime showtime) {
-        boolean exists = showtimeRepository.existsByMovieIdAndTheaterIdAndShowtime(showtime.getMovie().getId(),
+        boolean exists = showtimeRepository.existsByMovieIdAndTheaterIdAndShowDatetime(showtime.getMovie().getId(),
             showtime.getTheater().getId(),
-            showtime.getShowtime());
+            showtime.getShowDatetime());
         if (exists) {
             throw BadRequestException.DUPLICATED_SHOWTIME.get();
         }
@@ -41,7 +41,7 @@ public class ShowtimeService {
     @Transactional
     public Showtime updateShowtime(long id, ShowtimeUpdateRequest showtimeUpdateRequest) {
         Showtime showtime = showtimeRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_SHOWTIME::get);
-        showtime.setShowtime(showtimeUpdateRequest.showtime());
+        showtime.setShowDatetime(showtimeUpdateRequest.showDatetime());
         return showtime;
     }
 
