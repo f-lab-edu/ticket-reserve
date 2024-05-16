@@ -91,4 +91,16 @@ public class TheaterController {
             seat.getRowCode(),
             seat.getNumber()));
     }
+
+    @PutMapping("/admin/theaters/{theaterId}/seats/{seatId}")
+    public ResponseEntity<SeatResponse> updateSeat(@PathVariable Long theaterId,
+                                                   @PathVariable Long seatId,
+                                                   @RequestBody SeatRequest seatRequest) {
+        theaterService.getTheater(theaterId);
+        Seat seat = theaterService.updateSeat(seatId, seatRequest);
+        return ResponseEntity.status(200).body(new SeatResponse(
+            seat.getId(),
+            seat.getRowCode(),
+            seat.getNumber()));
+    }
 }

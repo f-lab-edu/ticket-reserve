@@ -1,5 +1,6 @@
 package com.kjh.ticketreserve.service;
 
+import com.kjh.ticketreserve.SeatRequest;
 import com.kjh.ticketreserve.TheaterRequest;
 import com.kjh.ticketreserve.TheaterSearchCondition;
 import com.kjh.ticketreserve.exception.BadRequestException;
@@ -68,5 +69,13 @@ public class TheaterService {
     @Transactional(readOnly = true)
     public Seat getSeat(long id) {
         return seatRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_SEAT::get);
+    }
+
+    @Transactional
+    public Seat updateSeat(long id, SeatRequest seatRequest) {
+        Seat seat = seatRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND::get);
+        seat.setRowCode(seatRequest.rowCode());
+        seat.setNumber(seatRequest.number());
+        return seat;
     }
 }
