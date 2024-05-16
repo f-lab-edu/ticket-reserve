@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class TheaterController {
 
@@ -109,5 +111,13 @@ public class TheaterController {
         theaterService.getTheater(theaterId);
         theaterService.deleteSeat(seatId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/theaters/{theaterId}/seats")
+    public ResponseEntity<ArrayResponse<SeatResponse>> getSeats(@PathVariable Long theaterId) {
+        theaterService.getTheater(theaterId);
+        List<Seat> seats = theaterService.getSeats(theaterId);
+        return ResponseEntity.status(200).body(new ArrayResponse<>(seats,
+            s -> new SeatResponse(s.getId(), s.getRowCode(), s.getNumber())));
     }
 }

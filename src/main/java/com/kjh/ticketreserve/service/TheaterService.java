@@ -14,6 +14,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class TheaterService {
 
@@ -83,5 +85,10 @@ public class TheaterService {
     public void deleteSeat(long id) {
         Seat seat = seatRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_SEAT::get);
         seatRepository.delete(seat);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Seat> getSeats(long theaterId) {
+        return seatRepository.findByTheaterIdOrderByRowCodeAscNumberAsc(theaterId);
     }
 }
