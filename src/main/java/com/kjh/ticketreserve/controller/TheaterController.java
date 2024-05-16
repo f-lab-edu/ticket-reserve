@@ -103,4 +103,11 @@ public class TheaterController {
             seat.getRowCode(),
             seat.getNumber()));
     }
+
+    @DeleteMapping("/admin/theaters/{theaterId}/seats/{seatId}")
+    public ResponseEntity<Object> deleteSeat(@PathVariable Long theaterId, @PathVariable Long seatId) {
+        theaterService.getTheater(theaterId);
+        theaterService.deleteSeat(seatId);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -73,9 +73,15 @@ public class TheaterService {
 
     @Transactional
     public Seat updateSeat(long id, SeatRequest seatRequest) {
-        Seat seat = seatRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND::get);
+        Seat seat = seatRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_SEAT::get);
         seat.setRowCode(seatRequest.rowCode());
         seat.setNumber(seatRequest.number());
         return seat;
+    }
+
+    @Transactional
+    public void deleteSeat(long id) {
+        Seat seat = seatRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_SEAT::get);
+        seatRepository.delete(seat);
     }
 }
