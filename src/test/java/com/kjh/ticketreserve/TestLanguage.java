@@ -127,4 +127,20 @@ public class TestLanguage {
 
         return response.getBody().id();
     }
+
+    @SuppressWarnings("DataFlowIssue")
+    public static long createTheater(
+        TestRestTemplate client,
+        String accessToken,
+        TheaterRequest theaterRequest) {
+
+        ResponseEntity<TheaterResponse> response = postWithToken(client,
+            accessToken,
+            "/admin/theaters",
+            theaterRequest,
+            new ParameterizedTypeReference<>() {
+            });
+
+        return response.getBody().id();
+    }
 }
