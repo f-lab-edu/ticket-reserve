@@ -2,7 +2,9 @@ package com.kjh.ticketreserve.exception;
 
 import org.springframework.http.HttpStatus;
 
-public enum NotFoundException {
+import java.util.function.Supplier;
+
+public enum NotFoundException implements Supplier<ResponseException> {
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다."),
     NOT_FOUND_MOVIE(HttpStatus.NOT_FOUND, "영화를 찾을 수 없습니다."),
     NOT_FOUND_THEATER(HttpStatus.NOT_FOUND, "영화관을 찾을 수 없습니다."),
@@ -15,6 +17,7 @@ public enum NotFoundException {
         this.responseException = new ResponseException(httpStatus, message);
     }
 
+    @Override
     public ResponseException get() {
         return responseException;
     }

@@ -2,7 +2,9 @@ package com.kjh.ticketreserve.exception;
 
 import org.springframework.http.HttpStatus;
 
-public enum BadRequestException {
+import java.util.function.Supplier;
+
+public enum BadRequestException implements Supplier<ResponseException> {
     DUPLICATED_EMAIL(HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다."),
     DUPLICATED_SHOWTIME(HttpStatus.BAD_REQUEST, "이미 존재하는 상영시간표입니다."),
     DUPLICATED_SEAT(HttpStatus.BAD_REQUEST, "이미 존재하는 좌석입니다."),
@@ -14,6 +16,7 @@ public enum BadRequestException {
         this.responseException = new ResponseException(httpStatus, message);
     }
 
+    @Override
     public ResponseException get() {
         return responseException;
     }

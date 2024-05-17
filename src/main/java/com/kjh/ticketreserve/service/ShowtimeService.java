@@ -35,19 +35,19 @@ public class ShowtimeService {
 
     @Transactional(readOnly = true)
     public Showtime getShowtime(long id) {
-        return showtimeRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_SHOWTIME::get);
+        return showtimeRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_SHOWTIME);
     }
 
     @Transactional
     public Showtime updateShowtime(long id, ShowtimeUpdateRequest showtimeUpdateRequest) {
-        Showtime showtime = showtimeRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_SHOWTIME::get);
+        Showtime showtime = showtimeRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_SHOWTIME);
         showtime.setShowDatetime(showtimeUpdateRequest.showDatetime());
         return showtime;
     }
 
     @Transactional
     public void deleteShowtime(long id) {
-        Showtime showtime = showtimeRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_SHOWTIME::get);
+        Showtime showtime = showtimeRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_SHOWTIME);
         showtimeRepository.delete(showtime);
     }
 

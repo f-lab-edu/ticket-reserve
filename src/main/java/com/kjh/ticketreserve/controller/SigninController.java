@@ -34,6 +34,6 @@ public class SigninController {
             .filter(u -> encoder.matches(credentials.password(), u.getPasswordHash()))
             .map(u -> jwtProvider.createToken(u.getEmail()))
             .map(token -> ResponseEntity.ok(new AccessTokenCarrier(token)))
-            .orElseThrow(BadRequestException.BAD_CREDENTIALS::get);
+            .orElseThrow(BadRequestException.BAD_CREDENTIALS);
     }
 }

@@ -23,12 +23,12 @@ public class MovieService {
 
     @Transactional(readOnly = true)
     public Movie getMovie(long id) {
-        return movieRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_MOVIE::get);
+        return movieRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_MOVIE);
     }
 
     @Transactional
     public Movie updateMovie(long id, MovieRequest movieRequest) {
-        Movie movie = movieRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_MOVIE::get);
+        Movie movie = movieRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_MOVIE);
         movie.setTitle(movieRequest.title());
         movie.setStartDate(movieRequest.startDate());
         movie.setEndDate(movieRequest.endDate());
@@ -38,7 +38,7 @@ public class MovieService {
 
     @Transactional
     public void deleteMovie(long id) {
-        Movie movie = movieRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_MOVIE::get);
+        Movie movie = movieRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_MOVIE);
         movieRepository.delete(movie);
     }
 

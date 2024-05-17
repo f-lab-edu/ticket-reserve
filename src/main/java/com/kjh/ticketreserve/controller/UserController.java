@@ -24,6 +24,6 @@ public class UserController {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userRepository.findByEmail(userDetails.getUsername())
             .map(u -> new UserInfo(u.getEmail()))
-            .orElseThrow(NotFoundException.NOT_FOUND_USER::get);
+            .orElseThrow(NotFoundException.NOT_FOUND_USER);
     }
 }

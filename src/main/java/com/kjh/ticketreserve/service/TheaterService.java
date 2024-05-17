@@ -34,12 +34,12 @@ public class TheaterService {
 
     @Transactional(readOnly = true)
     public Theater getTheater(long id) {
-        return theaterRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_THEATER::get);
+        return theaterRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_THEATER);
     }
 
     @Transactional
     public Theater updateTheater(long id, TheaterRequest theaterRequest) {
-        Theater theater = theaterRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_THEATER::get);
+        Theater theater = theaterRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_THEATER);
         theater.setName(theaterRequest.name());
         theater.setAddress(theaterRequest.address());
         return theater;
@@ -47,7 +47,7 @@ public class TheaterService {
 
     @Transactional
     public void deleteTheater(long id) {
-        Theater theater = theaterRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_THEATER::get);
+        Theater theater = theaterRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_THEATER);
         theaterRepository.delete(theater);
     }
 
@@ -70,12 +70,12 @@ public class TheaterService {
 
     @Transactional(readOnly = true)
     public Seat getSeat(long id) {
-        return seatRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_SEAT::get);
+        return seatRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_SEAT);
     }
 
     @Transactional
     public Seat updateSeat(long id, SeatRequest seatRequest) {
-        Seat seat = seatRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_SEAT::get);
+        Seat seat = seatRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_SEAT);
         seat.setRowCode(seatRequest.rowCode());
         seat.setNumber(seatRequest.number());
         return seat;
@@ -83,7 +83,7 @@ public class TheaterService {
 
     @Transactional
     public void deleteSeat(long id) {
-        Seat seat = seatRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_SEAT::get);
+        Seat seat = seatRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_SEAT);
         seatRepository.delete(seat);
     }
 
