@@ -2,6 +2,7 @@ package com.kjh.ticketreserve.theater;
 
 import com.kjh.ticketreserve.AutoDomainSource;
 import com.kjh.ticketreserve.Credentials;
+import com.kjh.ticketreserve.SeatRequest;
 import com.kjh.ticketreserve.TheaterRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -41,7 +42,7 @@ public class DeleteTests {
 
     @ParameterizedTest
     @AutoDomainSource
-    void 존재하지_않는_영화관_아이디를_사용해_삭제하면_Not_Found_상태코드를_반환한다(
+    void 존재하지_않는_영화관_아이디를_사용해_영화관을_삭제하면_Not_Found_상태코드를_반환한다(
         Credentials credentials,
         TheaterRequest theaterRequest,
         @Autowired TestRestTemplate client
@@ -56,6 +57,80 @@ public class DeleteTests {
         ResponseEntity<Object> response = deleteWithToken(client,
             accessToken,
             "/admin/theaters/" + id,
+            Object.class);
+
+        // Assert
+        assertThat(response.getStatusCode().value()).isEqualTo(404);
+    }
+
+    @ParameterizedTest
+    @AutoDomainSource
+    void 좌석_아이디를_사용해_좌석을_삭제하면_OK_상태코드를_반환한다(
+        Credentials credentials,
+        TheaterRequest theaterRequest,
+        SeatRequest seatRequest,
+        @Autowired TestRestTemplate client
+    ) {
+        // Arrange
+        signup(client, credentials);
+        String accessToken = signin(client, credentials);
+        long theaterId = createTheater(client, accessToken, theaterRequest);
+        long seatId = createSeat(client, accessToken, theaterId, seatRequest);
+
+        // Act
+        ResponseEntity<Object> response = deleteWithToken(client,
+            accessToken,
+            "/admin/theaters/" + theaterId + "/seats/" + seatId,
+            Object.class);
+
+        // Assert
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+    }
+
+    @ParameterizedTest
+    @AutoDomainSource
+    void 존재하지_않는_좌석_아이디를_사용해_좌석을_삭제하면_Not_Found_상태코드를_반환한다(
+        Credentials credentials,
+        TheaterRequest theaterRequest,
+        SeatRequest seatRequest,
+        @Autowired TestRestTemplate client
+    ) {
+        // Arrange
+        signup(client, credentials);
+        String accessToken = signin(client, credentials);
+        long theaterId = createTheater(client, accessToken, theaterRequest);
+        long seatId = createSeat(client, accessToken, theaterId, seatRequest);
+        deleteWithToken(client, accessToken, "/admin/theaters/" + theaterId + "/seats/" + seatId, Void.class);
+
+        // Act
+        ResponseEntity<Object> response = deleteWithToken(client,
+            accessToken,
+            "/admin/theaters/" + theaterId + "/seats/" + seatId,
+            Object.class);
+
+        // Assert
+        assertThat(response.getStatusCode().value()).isEqualTo(404);
+    }
+
+    @ParameterizedTest
+    @AutoDomainSource
+    void 존재하지_않는_영화관_아이디를_사용해_좌석을_삭제하면_Not_Found_상태코드를_반환한다(
+        Credentials credentials,
+        TheaterRequest theaterRequest,
+        SeatRequest seatRequest,
+        long notExistingTheaterId,
+        @Autowired TestRestTemplate client
+    ) {
+        // Arrange
+        signup(client, credentials);
+        String accessToken = signin(client, credentials);
+        long theaterId = createTheater(client, accessToken, theaterRequest);
+        long seatId = createSeat(client, accessToken, theaterId, seatRequest);
+
+        // Act
+        ResponseEntity<Object> response = deleteWithToken(client,
+            accessToken,
+            "/admin/theaters/" + notExistingTheaterId + "/seats/" + seatId,
             Object.class);
 
         // Assert

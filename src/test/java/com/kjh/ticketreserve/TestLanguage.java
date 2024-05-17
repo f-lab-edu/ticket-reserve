@@ -159,4 +159,21 @@ public class TestLanguage {
 
         return response.getBody().id();
     }
+
+    @SuppressWarnings("DataFlowIssue")
+    public static long createSeat(
+        TestRestTemplate client,
+        String accessToken,
+        long theaterId,
+        SeatRequest seatRequest) {
+
+        ResponseEntity<TheaterResponse> response = postWithToken(client,
+            accessToken,
+            "/admin/theaters/" + theaterId + "/seats",
+            seatRequest,
+            new ParameterizedTypeReference<>() {
+            });
+
+        return response.getBody().id();
+    }
 }

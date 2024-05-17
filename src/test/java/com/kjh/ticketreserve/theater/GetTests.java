@@ -9,6 +9,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Comparator;
 import java.util.List;
 
 import static com.kjh.ticketreserve.TestLanguage.*;
@@ -130,5 +131,65 @@ public class GetTests {
         TheaterResponse found = response.getBody().content().get(0);
         assertThat(found.name()).isEqualTo(theaterToFind.name());
         assertThat(found.address()).isEqualTo(theaterToFind.address());
+    }
+
+    @ParameterizedTest
+    @AutoDomainSource
+    void 좌석_아이디를_사용해_조회하면_좌석_정보를_반환한다(
+        Credentials credentials,
+        TheaterRequest theaterRequest,
+        SeatRequest seatRequest,
+        @Autowired TestRestTemplate client
+    ) {
+        // Arrange
+        signup(client, credentials);
+        String accessToken = signin(client, credentials);
+        long theaterId = createTheater(client, accessToken, theaterRequest);
+        long seatId = createSeat(client, accessToken, theaterId, seatRequest);
+
+        // Act
+        ResponseEntity<SeatResponse> response = getWithToken(client,
+            accessToken,
+            "/theaters/" + theaterId + "/seats/" + seatId,
+            SeatResponse.class);
+
+        // Assert
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        SeatResponse body = response.getBody();
+        assertThat(body).isNotNull();
+        assertThat(body.id()).isEqualTo(seatId);
+        assertThat(body.rowCode()).isEqualTo(seatRequest.rowCode());
+        assertThat(body.number()).isEqualTo(seatRequest.number());
+    }
+
+    @ParameterizedTest
+    @AutoDomainSource
+    void 좌석을_검색하면_정렬된_좌석_리스트를_반환한다(
+        Credentials credentials,
+        TheaterRequest theaterRequest,
+        List<SeatRequest> seatRequests,
+        @Autowired TestRestTemplate client
+    ) {
+        // Arrange
+        signup(client, credentials);
+        String accessToken = signin(client, credentials);
+        long theaterId = createTheater(client, accessToken, theaterRequest);
+        for (SeatRequest seatRequest : seatRequests) {
+            createSeat(client, accessToken, theaterId, seatRequest);
+        }
+
+        // Act
+        ResponseEntity<ArrayResponse<SeatResponse>> response = getWithToken(client,
+            accessToken,
+            "/theaters/" + theaterId + "/seats",
+            new ParameterizedTypeReference<>() {
+            });
+
+        // Assert
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().contents().size()).isEqualTo(seatRequests.size());
+        assertThat(response.getBody().contents()).isSortedAccordingTo(
+            Comparator.comparing(SeatResponse::rowCode).thenComparing(SeatResponse::number));
     }
 }
