@@ -143,4 +143,20 @@ public class TestLanguage {
 
         return response.getBody().id();
     }
+
+    @SuppressWarnings("DataFlowIssue")
+    public static long createShowtime(
+        TestRestTemplate client,
+        String accessToken,
+        ShowtimeRequest showtimeRequest) {
+
+        ResponseEntity<ShowtimeResponse> response = postWithToken(client,
+            accessToken,
+            "/admin/showtimes",
+            showtimeRequest,
+            new ParameterizedTypeReference<>() {
+            });
+
+        return response.getBody().id();
+    }
 }
