@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 public class ShowtimeController {
@@ -85,5 +86,12 @@ public class ShowtimeController {
                 new MovieResponse(s.getMovie()),
                 new TheaterResponse(s.getTheater()),
                 s.getShowDatetime())));
+    }
+
+    @GetMapping("/showtimes/{id}/seats")
+    public ResponseEntity<ArrayResponse<ShowtimeSeatResponse>> getSeats(@PathVariable long id) {
+        List<ShowtimeSeat> showtimeSeats = showtimeService.getSeats(id);
+        return ResponseEntity.status(200).body(new ArrayResponse<>(showtimeSeats,
+            s -> new ShowtimeSeatResponse(s.id(), s.rowCode(), s.number(), s.status())));
     }
 }

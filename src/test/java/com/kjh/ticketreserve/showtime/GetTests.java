@@ -194,4 +194,59 @@ public class GetTests {
         ShowtimeResponse found = response.getBody().content().get(0);
         assertThat(found.showDatetime()).isEqualTo(showtimeToFind.showDatetime());
     }
+
+    @ParameterizedTest
+    @AutoDomainSource
+    void 상영시간표_아이디를_사용해_좌석을_조회하면_좌석_리스트를_반환한다(
+        Credentials credentials,
+        MovieRequest movieRequest,
+        TheaterRequest theaterRequest,
+        List<SeatRequest> seatRequests,
+        TheaterRequest otherTheaterRequest,
+        List<SeatRequest> otherSeatRequests,
+        List<LocalDateTime> showDatetimes,
+        @Autowired TestRestTemplate client
+    ) {
+        // Arrange
+        signup(client, credentials);
+        String accessToken = signin(client, credentials);
+        long movieId = createMovie(client, accessToken, movieRequest);
+        long theaterId = createTheater(client, accessToken, theaterRequest);
+        for (SeatRequest seatRequest : seatRequests) {
+            createSeat(client, accessToken, theaterId, seatRequest);
+        }
+        List<Long> showtimeIds = new ArrayList<>();
+        for (LocalDateTime showDatetime : showDatetimes) {
+            ShowtimeRequest showtimeRequest = new ShowtimeRequest(movieId, theaterId, showDatetime);
+            long showtimeId = createShowtime(client, accessToken, showtimeRequest);
+            showtimeIds.add(showtimeId);
+        }
+
+        long otherTheaterId = createTheater(client, accessToken, otherTheaterRequest);
+        for (SeatRequest otherSeatRequest : otherSeatRequests) {
+            createSeat(client, accessToken, otherTheaterId, otherSeatRequest);
+        }
+        for (LocalDateTime showDatetime : showDatetimes) {
+            createShowtime(client, accessToken, new ShowtimeRequest(movieId, otherTheaterId, showDatetime));
+        }
+
+        // Act
+        Long showtimeIdToFind = showtimeIds.get(0);
+        ResponseEntity<ArrayResponse<ShowtimeSeatResponse>> response = getWithToken(client,
+            accessToken,
+            "/showtimes/" + showtimeIdToFind + "/seats",
+            new ParameterizedTypeReference<>() {
+            });
+
+        // Assert
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        assertThat(response.getBody()).isNotNull();
+        ArrayResponse<ShowtimeSeatResponse> body = response.getBody();
+        assertThat(body.contents().size()).isEqualTo(seatRequests.size());
+        boolean hasSameSeats = body.contents().stream()
+            .allMatch(seatResponse -> seatRequests.stream()
+                .anyMatch(seatRequest -> seatRequest.rowCode() == seatResponse.rowCode()
+                    && seatRequest.number() == seatResponse.number()));
+        assertThat(hasSameSeats).isEqualTo(true);
+    }
 }
