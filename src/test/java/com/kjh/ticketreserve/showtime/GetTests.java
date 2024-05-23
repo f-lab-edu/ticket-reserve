@@ -247,6 +247,6 @@ public class GetTests {
             .allMatch(seatResponse -> seatRequests.stream()
                 .anyMatch(seatRequest -> seatRequest.rowCode() == seatResponse.rowCode()
                     && seatRequest.number() == seatResponse.number()));
-        assertThat(hasSameSeats).isEqualTo(true);
+        assertThat(hasSameSeats).isTrue();
     }
 }
