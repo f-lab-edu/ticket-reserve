@@ -1,14 +1,13 @@
 package com.kjh.ticketreserve.service;
 
 import com.kjh.ticketreserve.ShowtimeSearchCondition;
-import com.kjh.ticketreserve.ShowtimeSeat;
 import com.kjh.ticketreserve.ShowtimeUpdateRequest;
 import com.kjh.ticketreserve.exception.BadRequestException;
 import com.kjh.ticketreserve.exception.NotFoundException;
 import com.kjh.ticketreserve.jpa.SeatRepository;
 import com.kjh.ticketreserve.jpa.ShowtimeRepository;
-import com.kjh.ticketreserve.model.Showtime;
-import com.kjh.ticketreserve.model.Theater;
+import com.kjh.ticketreserve.jpa.ShowtimeSeatRepository;
+import com.kjh.ticketreserve.model.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -21,13 +20,15 @@ import java.util.List;
 public class ShowtimeService {
 
     private final ShowtimeRepository showtimeRepository;
+    private final ShowtimeSeatRepository showtimeSeatRepository;
     private final SeatRepository seatRepository;
-    private final TheaterService theaterService;
 
-    public ShowtimeService(ShowtimeRepository showtimeRepository, SeatRepository seatRepository, TheaterService theaterService) {
+    public ShowtimeService(ShowtimeRepository showtimeRepository,
+                           ShowtimeSeatRepository showtimeSeatRepository,
+                           SeatRepository seatRepository) {
         this.showtimeRepository = showtimeRepository;
+        this.showtimeSeatRepository = showtimeSeatRepository;
         this.seatRepository = seatRepository;
-        this.theaterService = theaterService;
     }
 
     @Transactional
@@ -39,6 +40,15 @@ public class ShowtimeService {
             throw BadRequestException.DUPLICATED_SHOWTIME.get();
         }
         showtimeRepository.save(showtime);
+
+        List<Seat> seats = seatRepository.findByTheaterId(showtime.getTheater().getId());
+        for (Seat seat : seats) {
+            ShowtimeSeat showtimeSeat = new ShowtimeSeat();
+            showtimeSeat.setShowtime(showtime);
+            showtimeSeat.setSeat(seat);
+            showtimeSeat.setStatus(ShowtimeSeatStatus.AVAILABLE);
+            showtimeSeatRepository.save(showtimeSeat);
+        }
     }
 
     @Transactional(readOnly = true)
@@ -67,7 +77,6 @@ public class ShowtimeService {
 
     public List<ShowtimeSeat> getSeats(long id) {
         Showtime showtime = showtimeRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_SHOWTIME);
-        Theater theater = theaterService.getTheater(showtime.getTheater().getId());
-        return seatRepository.findShowtimeSeats(theater.getId(), showtime.getId());
+        return showtimeSeatRepository.findByShowtimeId(showtime.getId());
     }
 }

@@ -3,6 +3,7 @@ package com.kjh.ticketreserve.controller;
 import com.kjh.ticketreserve.*;
 import com.kjh.ticketreserve.model.Movie;
 import com.kjh.ticketreserve.model.Showtime;
+import com.kjh.ticketreserve.model.ShowtimeSeat;
 import com.kjh.ticketreserve.model.Theater;
 import com.kjh.ticketreserve.service.MovieService;
 import com.kjh.ticketreserve.service.ShowtimeService;
@@ -90,8 +91,11 @@ public class ShowtimeController {
 
     @GetMapping("/showtimes/{id}/seats")
     public ResponseEntity<ArrayResponse<ShowtimeSeatResponse>> getSeats(@PathVariable long id) {
-        List<ShowtimeSeat> showtimeSeats = showtimeService.getSeats(id);
-        return ResponseEntity.status(200).body(new ArrayResponse<>(showtimeSeats,
-            s -> new ShowtimeSeatResponse(s.id(), s.rowCode(), s.number(), s.status())));
+        List<ShowtimeSeat> showtimeSeatInfos = showtimeService.getSeats(id);
+        return ResponseEntity.status(200).body(new ArrayResponse<>(showtimeSeatInfos,
+            s -> new ShowtimeSeatResponse(s.getSeat().getId(),
+                s.getSeat().getRowCode(),
+                s.getSeat().getNumber(),
+                s.getStatus())));
     }
 }

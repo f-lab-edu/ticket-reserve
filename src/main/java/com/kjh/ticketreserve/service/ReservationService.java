@@ -1,11 +1,12 @@
 package com.kjh.ticketreserve.service;
 
-import com.kjh.ticketreserve.ReservationStatus;
 import com.kjh.ticketreserve.exception.BadRequestException;
 import com.kjh.ticketreserve.exception.NotFoundException;
 import com.kjh.ticketreserve.jpa.ReservationRepository;
-import com.kjh.ticketreserve.jpa.SeatRepository;
+import com.kjh.ticketreserve.jpa.ShowtimeSeatRepository;
 import com.kjh.ticketreserve.model.Reservation;
+import com.kjh.ticketreserve.model.ShowtimeSeat;
+import com.kjh.ticketreserve.model.ShowtimeSeatStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,25 +14,24 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
-    private final SeatRepository seatRepository;
+    private final ShowtimeSeatRepository showtimeSeatRepository;
 
-    public ReservationService(ReservationRepository reservationRepository, SeatRepository seatRepository) {
+    public ReservationService(ReservationRepository reservationRepository,
+                              ShowtimeSeatRepository showtimeSeatRepository) {
         this.reservationRepository = reservationRepository;
-        this.seatRepository = seatRepository;
+        this.showtimeSeatRepository = showtimeSeatRepository;
     }
 
     @Transactional
     public void createReservation(Reservation reservation) {
-        seatRepository.findByIdWithLock(reservation.getSeat().getId())
-            .orElseThrow(NotFoundException.NOT_FOUND_SEAT);
+        ShowtimeSeat showtimeSeat = showtimeSeatRepository.findByShowtimeIdAndSeatIdForUpdate(
+            reservation.getShowtime().getId(), reservation.getSeat().getId())
+            .orElseThrow(NotFoundException.NOT_FOUND_SHOWTIME_SEAT);
 
-        boolean isReserved = reservationRepository.existsByShowtimeIdAndSeatIdAndStatus(
-            reservation.getShowtime().getId(),
-            reservation.getSeat().getId(),
-            ReservationStatus.RESERVED);
-        if (isReserved) {
+        if (ShowtimeSeatStatus.RESERVED.equals(showtimeSeat.getStatus())) {
             throw BadRequestException.ALREADY_RESERVED_SEAT.get();
         }
+        showtimeSeat.setStatus(ShowtimeSeatStatus.RESERVED);
         reservationRepository.save(reservation);
     }
 }
