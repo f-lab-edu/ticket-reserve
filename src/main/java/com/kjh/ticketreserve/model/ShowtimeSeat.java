@@ -27,4 +27,7 @@ public class ShowtimeSeat {
 
     @Enumerated(EnumType.STRING)
     private ShowtimeSeatStatus status;
+
+    @Version
+    private Integer version;
 }
