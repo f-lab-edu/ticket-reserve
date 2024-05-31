@@ -1,7 +1,6 @@
 package com.kjh.ticketreserve.service;
 
 import com.kjh.ticketreserve.ShowtimeSearchCondition;
-import com.kjh.ticketreserve.ShowtimeUpdateRequest;
 import com.kjh.ticketreserve.exception.BadRequestException;
 import com.kjh.ticketreserve.exception.NotFoundException;
 import com.kjh.ticketreserve.jpa.SeatRepository;
@@ -14,31 +13,45 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class ShowtimeService {
 
+    private final MovieService movieService;
+    private final TheaterService theaterService;
     private final ShowtimeRepository showtimeRepository;
     private final ShowtimeSeatRepository showtimeSeatRepository;
     private final SeatRepository seatRepository;
 
-    public ShowtimeService(ShowtimeRepository showtimeRepository,
+    public ShowtimeService(MovieService movieService,
+                           TheaterService theaterService,
+                           ShowtimeRepository showtimeRepository,
                            ShowtimeSeatRepository showtimeSeatRepository,
                            SeatRepository seatRepository) {
+        this.movieService = movieService;
+        this.theaterService = theaterService;
         this.showtimeRepository = showtimeRepository;
         this.showtimeSeatRepository = showtimeSeatRepository;
         this.seatRepository = seatRepository;
     }
 
     @Transactional
-    public void createShowtime(Showtime showtime) {
-        boolean exists = showtimeRepository.existsByMovieIdAndTheaterIdAndShowDatetime(showtime.getMovie().getId(),
-            showtime.getTheater().getId(),
-            showtime.getShowDatetime());
+    public Showtime createShowtime(long movieId, long theaterId, LocalDateTime showDatetime) {
+        Movie movie = movieService.getMovie(movieId);
+        Theater theater = theaterService.getTheater(theaterId);
+
+        boolean exists = showtimeRepository.existsByMovieIdAndTheaterIdAndShowDatetime(movie.getId(),
+            theater.getId(),
+            showDatetime);
         if (exists) {
             throw BadRequestException.DUPLICATED_SHOWTIME.get();
         }
+        Showtime showtime = new Showtime();
+        showtime.setMovie(movie);
+        showtime.setTheater(theater);
+        showtime.setShowDatetime(showDatetime);
         showtimeRepository.save(showtime);
 
         List<Seat> seats = seatRepository.findByTheaterId(showtime.getTheater().getId());
@@ -49,6 +62,7 @@ public class ShowtimeService {
             showtimeSeat.setStatus(ShowtimeSeatStatus.AVAILABLE);
             showtimeSeatRepository.save(showtimeSeat);
         }
+        return showtime;
     }
 
     @Transactional(readOnly = true)
@@ -57,9 +71,9 @@ public class ShowtimeService {
     }
 
     @Transactional
-    public Showtime updateShowtime(long id, ShowtimeUpdateRequest showtimeUpdateRequest) {
+    public Showtime updateShowtime(long id, LocalDateTime showDatetime) {
         Showtime showtime = showtimeRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_SHOWTIME);
-        showtime.setShowDatetime(showtimeUpdateRequest.showDatetime());
+        showtime.setShowDatetime(showDatetime);
         return showtime;
     }
 

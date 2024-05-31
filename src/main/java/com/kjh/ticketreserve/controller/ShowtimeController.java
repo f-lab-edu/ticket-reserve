@@ -1,13 +1,9 @@
 package com.kjh.ticketreserve.controller;
 
 import com.kjh.ticketreserve.*;
-import com.kjh.ticketreserve.model.Movie;
 import com.kjh.ticketreserve.model.Showtime;
 import com.kjh.ticketreserve.model.ShowtimeSeat;
-import com.kjh.ticketreserve.model.Theater;
-import com.kjh.ticketreserve.service.MovieService;
 import com.kjh.ticketreserve.service.ShowtimeService;
-import com.kjh.ticketreserve.service.TheaterService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,52 +15,39 @@ import java.util.List;
 public class ShowtimeController {
 
     private final ShowtimeService showtimeService;
-    private final MovieService movieService;
-    private final TheaterService theaterService;
 
-    public ShowtimeController(ShowtimeService showtimeService,
-                              MovieService movieService,
-                              TheaterService theaterService) {
+    public ShowtimeController(ShowtimeService showtimeService) {
         this.showtimeService = showtimeService;
-        this.movieService = movieService;
-        this.theaterService = theaterService;
     }
 
     @PostMapping("/admin/showtimes")
     public ResponseEntity<ShowtimeResponse> createShowtime(@RequestBody ShowtimeRequest showtimeRequest) {
-        Movie movie = movieService.getMovie(showtimeRequest.movieId());
-        Theater theater = theaterService.getTheater(showtimeRequest.theaterId());
-        Showtime showtime = new Showtime();
-        showtime.setMovie(movie);
-        showtime.setTheater(theater);
-        showtime.setShowDatetime(showtimeRequest.showDatetime());
-        showtimeService.createShowtime(showtime);
+        Showtime showtime = showtimeService.createShowtime(showtimeRequest.movieId(),
+            showtimeRequest.theaterId(),
+            showtimeRequest.showDatetime());
         return ResponseEntity.status(201).body(new ShowtimeResponse(
-            showtime.getId(),
-            new MovieResponse(movie),
-            new TheaterResponse(theater),
-            showtime.getShowDatetime()));
+            showtime,
+            new MovieResponse(showtime.getMovie()),
+            new TheaterResponse(showtime.getTheater())));
     }
 
     @GetMapping("/showtimes/{id}")
     public ResponseEntity<ShowtimeResponse> getShowtime(@PathVariable long id) {
         Showtime showtime = showtimeService.getShowtime(id);
         return ResponseEntity.status(200).body(new ShowtimeResponse(
-            showtime.getId(),
+            showtime,
             new MovieResponse(showtime.getMovie()),
-            new TheaterResponse(showtime.getTheater()),
-            showtime.getShowDatetime()));
+            new TheaterResponse(showtime.getTheater())));
     }
 
     @PutMapping("/admin/showtimes/{id}")
     public ResponseEntity<ShowtimeResponse> updateShowtime(@PathVariable long id,
                                                            @RequestBody ShowtimeUpdateRequest showtimeUpdateRequest) {
-        Showtime showtime = showtimeService.updateShowtime(id, showtimeUpdateRequest);
+        Showtime showtime = showtimeService.updateShowtime(id, showtimeUpdateRequest.showDatetime());
         return ResponseEntity.status(200).body(new ShowtimeResponse(
-            showtime.getId(),
+            showtime,
             new MovieResponse(showtime.getMovie()),
-            new TheaterResponse(showtime.getTheater()),
-            showtime.getShowDatetime()));
+            new TheaterResponse(showtime.getTheater())));
     }
 
     @DeleteMapping("/admin/showtimes/{id}")
@@ -83,19 +66,13 @@ public class ShowtimeController {
     ) {
         Page<Showtime> showtimePage = showtimeService.searchShowtimes(pageNumber, pageSize, movieId, theaterId, date);
         return ResponseEntity.status(200).body(new PageResponse<>(showtimePage,
-            s -> new ShowtimeResponse(s.getId(),
-                new MovieResponse(s.getMovie()),
-                new TheaterResponse(s.getTheater()),
-                s.getShowDatetime())));
+            s -> new ShowtimeResponse(s, new MovieResponse(s.getMovie()), new TheaterResponse(s.getTheater()))));
     }
 
     @GetMapping("/showtimes/{id}/seats")
     public ResponseEntity<ArrayResponse<ShowtimeSeatResponse>> getSeats(@PathVariable long id) {
-        List<ShowtimeSeat> showtimeSeatInfos = showtimeService.getSeats(id);
-        return ResponseEntity.status(200).body(new ArrayResponse<>(showtimeSeatInfos,
-            s -> new ShowtimeSeatResponse(s.getSeat().getId(),
-                s.getSeat().getRowCode(),
-                s.getSeat().getNumber(),
-                s.getStatus())));
+        List<ShowtimeSeat> showtimeSeats = showtimeService.getSeats(id);
+        return ResponseEntity.status(200).body(new ArrayResponse<>(showtimeSeats,
+            s -> new ShowtimeSeatResponse(s, s.getSeat())));
     }
 }

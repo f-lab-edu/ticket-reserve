@@ -1,7 +1,7 @@
 package com.kjh.ticketreserve.service;
 
 import com.kjh.ticketreserve.SeatRequest;
-import com.kjh.ticketreserve.TheaterRequest;
+import com.kjh.ticketreserve.SeatRowCode;
 import com.kjh.ticketreserve.TheaterSearchCondition;
 import com.kjh.ticketreserve.exception.BadRequestException;
 import com.kjh.ticketreserve.exception.NotFoundException;
@@ -28,8 +28,11 @@ public class TheaterService {
     }
 
     @Transactional
-    public void createTheater(Theater theater) {
-        theaterRepository.save(theater);
+    public Theater createTheater(String name, String address) {
+        Theater theater = new Theater();
+        theater.setName(name);
+        theater.setAddress(address);
+        return theaterRepository.save(theater);
     }
 
     @Transactional(readOnly = true)
@@ -38,10 +41,10 @@ public class TheaterService {
     }
 
     @Transactional
-    public Theater updateTheater(long id, TheaterRequest theaterRequest) {
+    public Theater updateTheater(long id, String name, String address) {
         Theater theater = theaterRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_THEATER);
-        theater.setName(theaterRequest.name());
-        theater.setAddress(theaterRequest.address());
+        theater.setName(name);
+        theater.setAddress(address);
         return theater;
     }
 
@@ -58,14 +61,18 @@ public class TheaterService {
     }
 
     @Transactional
-    public void createSeat(Seat seat) {
-        boolean exists = seatRepository.existsByTheaterIdAndRowCodeAndNumber(seat.getTheater().getId(),
-            seat.getRowCode(),
-            seat.getNumber());
+    public Seat createSeat(long theaterId, SeatRowCode rowCode, int number) {
+        Theater theater = theaterRepository.findById(theaterId).orElseThrow(NotFoundException.NOT_FOUND_THEATER);
+
+        boolean exists = seatRepository.existsByTheaterIdAndRowCodeAndNumber(theater.getId(), rowCode, number);
         if (exists) {
             throw BadRequestException.DUPLICATED_SEAT.get();
         }
-        seatRepository.save(seat);
+        Seat seat = new Seat();
+        seat.setTheater(theater);
+        seat.setRowCode(rowCode);
+        seat.setNumber(number);
+        return seatRepository.save(seat);
     }
 
     @Transactional(readOnly = true)

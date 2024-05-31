@@ -1,6 +1,5 @@
 package com.kjh.ticketreserve.service;
 
-import com.kjh.ticketreserve.MovieRequest;
 import com.kjh.ticketreserve.MovieSearchCondition;
 import com.kjh.ticketreserve.exception.NotFoundException;
 import com.kjh.ticketreserve.jpa.MovieRepository;
@@ -21,18 +20,28 @@ public class MovieService {
         this.movieRepository = movieRepository;
     }
 
+    @Transactional
+    public Movie createMovie(String title, LocalDateTime startDate, LocalDateTime endDate, int price) {
+        Movie movie = new Movie();
+        movie.setTitle(title);
+        movie.setStartDate(startDate);
+        movie.setEndDate(endDate);
+        movie.setPrice(price);
+        return movieRepository.save(movie);
+    }
+
     @Transactional(readOnly = true)
     public Movie getMovie(long id) {
         return movieRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_MOVIE);
     }
 
     @Transactional
-    public Movie updateMovie(long id, MovieRequest movieRequest) {
+    public Movie updateMovie(long id, String title, LocalDateTime startDate, LocalDateTime endDate, int price) {
         Movie movie = movieRepository.findById(id).orElseThrow(NotFoundException.NOT_FOUND_MOVIE);
-        movie.setTitle(movieRequest.title());
-        movie.setStartDate(movieRequest.startDate());
-        movie.setEndDate(movieRequest.endDate());
-        movie.setPrice(movieRequest.price());
+        movie.setTitle(title);
+        movie.setStartDate(startDate);
+        movie.setEndDate(endDate);
+        movie.setPrice(price);
         return movie;
     }
 

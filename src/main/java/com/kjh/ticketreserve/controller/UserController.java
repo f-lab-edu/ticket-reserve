@@ -1,8 +1,9 @@
 package com.kjh.ticketreserve.controller;
 
 import com.kjh.ticketreserve.UserInfo;
-import com.kjh.ticketreserve.exception.NotFoundException;
-import com.kjh.ticketreserve.jpa.UserRepository;
+import com.kjh.ticketreserve.model.User;
+import com.kjh.ticketreserve.service.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,17 +14,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("users")
 public class UserController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping("/my/info")
-    public UserInfo getMyInfo() {
+    public ResponseEntity<UserInfo> getMyInfo() {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userRepository.findByEmail(userDetails.getUsername())
-            .map(u -> new UserInfo(u.getEmail()))
-            .orElseThrow(NotFoundException.NOT_FOUND_USER);
+        User user = userService.getByEmail(userDetails.getUsername());
+        return ResponseEntity.status(200).body(new UserInfo(user.getEmail()));
     }
 }

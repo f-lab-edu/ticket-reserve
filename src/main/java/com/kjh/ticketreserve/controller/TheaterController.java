@@ -21,39 +21,25 @@ public class TheaterController {
 
     @PostMapping("/admin/theaters")
     public ResponseEntity<TheaterResponse> createTheater(@RequestBody TheaterRequest theaterRequest) {
-        Theater theater = new Theater();
-        theater.setName(theaterRequest.name());
-        theater.setAddress(theaterRequest.address());
-        theaterService.createTheater(theater);
-
-        return ResponseEntity.status(201).body(new TheaterResponse(
-            theater.getId(),
-            theater.getName(),
-            theater.getAddress()
-        ));
+        Theater theater = theaterService.createTheater(theaterRequest.name(), theaterRequest.address());
+        return ResponseEntity.status(201).body(new TheaterResponse(theater));
     }
 
     @GetMapping("/theaters/{id}")
     public ResponseEntity<TheaterResponse> getTheater(@PathVariable Long id) {
         Theater theater = theaterService.getTheater(id);
-        return ResponseEntity.status(200).body(new TheaterResponse(
-            theater.getId(),
-            theater.getName(),
-            theater.getAddress()));
+        return ResponseEntity.status(200).body(new TheaterResponse(theater));
     }
 
     @PutMapping("/admin/theaters/{id}")
-    public ResponseEntity<TheaterResponse> updateTheater(@PathVariable("id") Long id,
+    public ResponseEntity<TheaterResponse> updateTheater(@PathVariable Long id,
                                                          @RequestBody TheaterRequest theaterRequest) {
-        Theater theater = theaterService.updateTheater(id, theaterRequest);
-        return ResponseEntity.status(200).body(new TheaterResponse(
-            theater.getId(),
-            theater.getName(),
-            theater.getAddress()));
+        Theater theater = theaterService.updateTheater(id, theaterRequest.name(), theaterRequest.address());
+        return ResponseEntity.status(200).body(new TheaterResponse(theater));
     }
 
     @DeleteMapping("/admin/theaters/{id}")
-    public ResponseEntity<TheaterResponse> deleteTheater(@PathVariable("id") Long id) {
+    public ResponseEntity<TheaterResponse> deleteTheater(@PathVariable Long id) {
         theaterService.deleteTheater(id);
         return ResponseEntity.ok().build();
     }
@@ -66,32 +52,20 @@ public class TheaterController {
         @RequestParam(required = false) String address
     ) {
         Page<Theater> theaterPage = theaterService.searchTheaters(pageNumber, pageSize, name, address);
-        return ResponseEntity.status(200).body(new PageResponse<>(theaterPage,
-            t -> new TheaterResponse(t.getId(), t.getName(), t.getAddress())));
+        return ResponseEntity.status(200).body(new PageResponse<>(theaterPage, t -> new TheaterResponse(t)));
     }
 
     @PostMapping("/admin/theaters/{theaterId}/seats")
     public ResponseEntity<SeatResponse> createSeat(@PathVariable Long theaterId, @RequestBody SeatRequest seatRequest) {
-        Theater theater = theaterService.getTheater(theaterId);
-        Seat seat = new Seat();
-        seat.setTheater(theater);
-        seat.setRowCode(seatRequest.rowCode());
-        seat.setNumber(seatRequest.number());
-        theaterService.createSeat(seat);
-        return ResponseEntity.status(201).body(new SeatResponse(
-            seat.getId(),
-            seat.getRowCode(),
-            seat.getNumber()));
+        Seat seat = theaterService.createSeat(theaterId, seatRequest.rowCode(), seatRequest.number());
+        return ResponseEntity.status(201).body(new SeatResponse(seat));
     }
 
     @GetMapping("/theaters/{theaterId}/seats/{seatId}")
     public ResponseEntity<SeatResponse> getSeat(@PathVariable Long theaterId, @PathVariable Long seatId) {
         theaterService.getTheater(theaterId);
         Seat seat = theaterService.getSeat(seatId);
-        return ResponseEntity.status(200).body(new SeatResponse(
-            seat.getId(),
-            seat.getRowCode(),
-            seat.getNumber()));
+        return ResponseEntity.status(200).body(new SeatResponse(seat));
     }
 
     @PutMapping("/admin/theaters/{theaterId}/seats/{seatId}")
@@ -100,10 +74,7 @@ public class TheaterController {
                                                    @RequestBody SeatRequest seatRequest) {
         theaterService.getTheater(theaterId);
         Seat seat = theaterService.updateSeat(seatId, seatRequest);
-        return ResponseEntity.status(200).body(new SeatResponse(
-            seat.getId(),
-            seat.getRowCode(),
-            seat.getNumber()));
+        return ResponseEntity.status(200).body(new SeatResponse(seat));
     }
 
     @DeleteMapping("/admin/theaters/{theaterId}/seats/{seatId}")
@@ -117,7 +88,6 @@ public class TheaterController {
     public ResponseEntity<ArrayResponse<SeatResponse>> getSeats(@PathVariable Long theaterId) {
         theaterService.getTheater(theaterId);
         List<Seat> seats = theaterService.getSeats(theaterId);
-        return ResponseEntity.status(200).body(new ArrayResponse<>(seats,
-            s -> new SeatResponse(s.getId(), s.getRowCode(), s.getNumber())));
+        return ResponseEntity.status(200).body(new ArrayResponse<>(seats, s -> new SeatResponse(s)));
     }
 }

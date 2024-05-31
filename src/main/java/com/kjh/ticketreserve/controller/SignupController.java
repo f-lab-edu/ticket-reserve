@@ -1,32 +1,24 @@
 package com.kjh.ticketreserve.controller;
 
+import com.kjh.ticketreserve.SignupRequest;
 import com.kjh.ticketreserve.exception.BadRequestException;
-import com.kjh.ticketreserve.jpa.UserRepository;
-import com.kjh.ticketreserve.model.User;
+import com.kjh.ticketreserve.service.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 public class SignupController {
 
-    private final UserRepository repository;
-    private final PasswordEncoder encoder;
+    private final UserService userService;
 
-    public SignupController(UserRepository repository, PasswordEncoder encoder) {
-        this.repository = repository;
-        this.encoder = encoder;
+    public SignupController(UserService userService) {
+        this.userService = userService;
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<Object> signup(@RequestBody Map<String, String> map) {
-        User user = new User();
-        user.setEmail(map.get("email"));
-        user.setPasswordHash(encoder.encode(map.get("password")));
+    public ResponseEntity<Object> signup(@RequestBody SignupRequest signupRequest) {
         try {
-            repository.save(user);
+            userService.createUser(signupRequest.email(), signupRequest.password());
         } catch (Exception e) {
             throw BadRequestException.DUPLICATED_EMAIL.get();
         }
