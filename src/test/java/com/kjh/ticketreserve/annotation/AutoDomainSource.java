@@ -1,4 +1,4 @@
-package com.kjh.ticketreserve;
+package com.kjh.ticketreserve.annotation;
 
 import autoparams.AutoSource;
 import autoparams.BrakeBeforeAnnotation;

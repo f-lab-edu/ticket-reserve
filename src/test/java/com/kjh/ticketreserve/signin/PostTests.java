@@ -1,15 +1,13 @@
 package com.kjh.ticketreserve.signin;
 
-import com.kjh.ticketreserve.AccessTokenCarrier;
-import com.kjh.ticketreserve.AutoDomainSource;
-import com.kjh.ticketreserve.EmailFixture;
+import com.kjh.ticketreserve.*;
+import com.kjh.ticketreserve.annotation.AutoDomainSource;
+import com.kjh.ticketreserve.annotation.WebTest;
 import com.kjh.ticketreserve.exception.BadRequestException;
-import com.kjh.ticketreserve.ErrorResponse;
 import com.kjh.ticketreserve.security.JwtProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
 
@@ -19,7 +17,7 @@ import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@WebTest
 @DisplayName("POST /signin")
 public class PostTests {
 

@@ -1,10 +1,11 @@
 package com.kjh.ticketreserve.reservation;
 
 import com.kjh.ticketreserve.*;
+import com.kjh.ticketreserve.annotation.AutoDomainSource;
+import com.kjh.ticketreserve.annotation.WebTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 import static com.kjh.ticketreserve.TestLanguage.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@WebTest
 @DisplayName("POST /reservations")
 public class PostTests {
 
