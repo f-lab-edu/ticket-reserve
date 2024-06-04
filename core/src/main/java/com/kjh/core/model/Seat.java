@@ -12,7 +12,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Seat {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class Showtime {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
