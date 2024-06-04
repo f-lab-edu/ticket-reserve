@@ -14,7 +14,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class User {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     private String email;
     @Column(length = 1000)

@@ -14,7 +14,7 @@ import lombok.Setter;
 public class ShowtimeSeat {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -25,6 +25,7 @@ public class ShowtimeSeat {
     @JoinColumn(name = "seat_id", nullable = false)
     private Seat seat;
 
+    @Column(columnDefinition = "varchar(10)")
     @Enumerated(EnumType.STRING)
     private ShowtimeSeatStatus status;
 

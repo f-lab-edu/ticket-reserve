@@ -12,7 +12,7 @@ import lombok.Setter;
 public class Reservation {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,6 +29,7 @@ public class Reservation {
 
     private Integer price;
 
+    @Column(columnDefinition = "varchar(10)")
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
 }
