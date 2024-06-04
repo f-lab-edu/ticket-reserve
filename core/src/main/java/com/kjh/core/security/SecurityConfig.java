@@ -8,32 +8,30 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
 
+    private final PasswordHasher passwordEncoder;
     private final JwtProvider jwtProvider;
 
     private final SecurityUserDetailsService userDetailsService;
 
     public SecurityConfig(
+        @Value("${security.password.encoder.secret}") String passwordEncoderSecret,
         @Value("${security.jwt.secret}") String jwtSecret,
         SecurityUserDetailsService userDetailsService
     ) {
+        this.passwordEncoder = new PasswordHasher(passwordEncoderSecret);
         this.jwtProvider = JwtProvider.create(jwtSecret);
         this.userDetailsService = userDetailsService;
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new Pbkdf2PasswordEncoder(
-            "My secret",
-            128,
-            100,
-            Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256);
+        return passwordEncoder;
     }
 
     @Bean
