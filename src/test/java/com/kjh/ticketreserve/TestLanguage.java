@@ -176,4 +176,20 @@ public class TestLanguage {
 
         return response.getBody().id();
     }
+
+    @SuppressWarnings("DataFlowIssue")
+    public static long createReservation(
+        TestRestTemplate client,
+        String accessToken,
+        ReservationRequest reservationRequest) {
+
+        ResponseEntity<ReservationResponse> response = postWithToken(client,
+            accessToken,
+            "/reservations",
+            reservationRequest,
+            new ParameterizedTypeReference<>() {
+            });
+
+        return response.getBody().id();
+    }
 }

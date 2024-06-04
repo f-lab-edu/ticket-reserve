@@ -3,6 +3,7 @@ package com.kjh.ticketreserve.controller;
 import com.kjh.ticketreserve.*;
 import com.kjh.ticketreserve.model.Movie;
 import com.kjh.ticketreserve.model.Showtime;
+import com.kjh.ticketreserve.model.ShowtimeSeat;
 import com.kjh.ticketreserve.model.Theater;
 import com.kjh.ticketreserve.service.MovieService;
 import com.kjh.ticketreserve.service.ShowtimeService;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 public class ShowtimeController {
@@ -85,5 +87,15 @@ public class ShowtimeController {
                 new MovieResponse(s.getMovie()),
                 new TheaterResponse(s.getTheater()),
                 s.getShowDatetime())));
+    }
+
+    @GetMapping("/showtimes/{id}/seats")
+    public ResponseEntity<ArrayResponse<ShowtimeSeatResponse>> getSeats(@PathVariable long id) {
+        List<ShowtimeSeat> showtimeSeatInfos = showtimeService.getSeats(id);
+        return ResponseEntity.status(200).body(new ArrayResponse<>(showtimeSeatInfos,
+            s -> new ShowtimeSeatResponse(s.getSeat().getId(),
+                s.getSeat().getRowCode(),
+                s.getSeat().getNumber(),
+                s.getStatus())));
     }
 }
