@@ -4,3 +4,7 @@
 ## Environment
 * Java 17
 * Spring Boot 3.2.5
+* MySQL 8.0.35
+
+## ERD
+![erd](./erd.png)
