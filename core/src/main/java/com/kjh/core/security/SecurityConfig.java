@@ -60,7 +60,7 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/signup", "/signin").permitAll()
+                .requestMatchers("/", "/signup", "/signin").permitAll()
                 .anyRequest().authenticated()
             )
             .build();
