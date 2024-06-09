@@ -31,28 +31,14 @@ jobs:
           PASSWORD_ENCODER_SECRET: ${{ secrets.PASSWORD_ENCODER_SECRET }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
-      - name: Get current time
-        uses: josStorer/get-current-time@v2
-        id: current-time
-        with:
-          format: YYYY-MM-DDTHH-mm-ss
-          utcOffset: "+09:00"
+      - name: Rename build file
+        run: mv ./admin/build/libs/*.jar ./application.jar
 
-      - name: Generate deployment package
-        run: |
-          mkdir -p deploy
-          cp admin/build/libs/admin.jar deploy/application.jar
-          cp -r Procfile deploy/.ebextensions
-          cp -r .platform deploy/.platform
-          cd deploy && zip -r deploy.zip .
-
-      - name: Deploy to EB
-        uses: einaregilsson/beanstalk-deploy@v22
+      - name: Copy file via ssh
+        uses: appleboy/scp-action@v0.1.7
         with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: ticket-reserve-admin
-          environment_name: Ticket-reserve-admin-env
-          version_label: github-action-${{ steps.current-time.outputs.formattedTime }}
-          region: ap-northeast-2
-          deployment_package: deploy/deploy.zip
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          source: application.jar
+          target: /home/ubuntu/ticket-reserve/tobe
