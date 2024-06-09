@@ -34,7 +34,7 @@ jobs:
       - name: Rename build file
         run: mv ./admin/build/libs/*.jar ./application.jar
 
-      - name: Copy file via ssh
+      - name: Copy build file to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -42,3 +42,19 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           source: application.jar
           target: /home/ubuntu/ticket-reserve/tobe
+
+      - name: Set environment variables
+        run: |
+          echo "DB_URL=${{ secrets.DB_URL }}" >> .env
+          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
+          echo "PASSWORD_ENCODER_SECRET=${{ secrets.PASSWORD_ENCODER_SECRET }}" >> .env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+
+      - name: Copy .env file to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          source: .env
+          target: /home/ubuntu/ticket-reserve/.env
