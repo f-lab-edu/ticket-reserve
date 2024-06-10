@@ -33,27 +33,22 @@ jobs:
       - name: Rename build file
         run: mv ./admin/build/libs/*.jar ./application.jar
 
-      - name: Copy build file to EC2
-        uses: appleboy/scp-action@v0.1.7
+      - name: Compress files
+        run: tar -czvf $GITHUB_SHA.tar.gz application.jar appspec.yml scripts
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          source: application.jar
-          target: /home/ubuntu/ticket-reserve/tobe
+          aws-region: ap-northeast-2
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Upload to S3
+        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.tar.gz s3://ticket-reserve-admin/$GITHUB_SHA.tar.gz
 
       - name: Deploy to EC2
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          script_stop: true
-          script: |
-            rm -rf /home/ubuntu/ticket-reserve/current
-            mkdir /home/ubuntu/ticket-reserve/current
-            mv /home/ubuntu/ticket-reserve/tobe/application.jar /home/ubuntu/ticket-reserve/current/application.jar
-            cd /home/ubuntu/ticket-reserve/current
-            sudo fuser -k -n tcp 8080 || true
-            nohup java -jar application.jar > ./output.log 2>&1 & 
-            rm -rf /home/ubuntu/ticket-reserve/tobe
+        run: aws deploy create-deployment
+          --application-name ticket-reserve-admin
+          --deployment-config-name CodeDeployDefault.AllAtOnce
+          --deployment-group-name Production
+          --s3-location bucket=ticket-reserve-admin,bundleType=tgz,key=$GITHUB_SHA.tar.gz
