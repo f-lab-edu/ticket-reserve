@@ -30,37 +30,31 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean :admin:build
 
-      - name: Upload test artifact
+      - name: Archive test artifacts
         uses: actions/upload-artifact@v4
         with:
           name: test
           path: admin/build/reports/tests
 
-      - name: Upload build artifact
+      - name: Archive build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: application
           path: admin/build/libs/*.jar
 
-      - name: Rename build file
-        run: mv ./admin/build/libs/*.jar ./application.jar
+      - name: Generate deployment package
+        run: |
+          mkdir -p deploy
+          cp ./admin/build/libs/*.jar deploy/application.jar
+          cd deploy && zip -r deploy.zip .
 
-      - name: Compress files
-        run: tar -czvf $GITHUB_SHA.tar.gz application.jar appspec.yml scripts
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v22
         with:
-          aws-region: ap-northeast-2
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Upload to S3
-        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.tar.gz s3://ticket-reserve-admin/$GITHUB_SHA.tar.gz
-
-      - name: Deploy to EC2
-        run: aws deploy create-deployment
-          --application-name ticket-reserve-admin
-          --deployment-config-name CodeDeployDefault.AllAtOnce
-          --deployment-group-name Production
-          --s3-location bucket=ticket-reserve-admin,bundleType=tgz,key=$GITHUB_SHA.tar.gz
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: ticket-reserve-admin
+          environment_name: Ticket-reserve-admin-env
+          version_label: ver-${{ github.sha }}
+          region: ap-northeast-2
+          deployment_package: deploy/deploy.zip
