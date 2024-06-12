@@ -30,6 +30,18 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean :admin:build
 
+      - name: Upload test artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: test
+          path: admin/build/reports/tests
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: application
+          path: admin/build/libs/*.jar
+
       - name: Rename build file
         run: mv ./admin/build/libs/*.jar ./application.jar
 
