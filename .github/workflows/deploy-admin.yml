@@ -42,10 +42,19 @@ jobs:
           name: application
           path: admin/build/libs/*.jar
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: application
+          path: deploy
+
       - name: Generate deployment package
         run: |
-          mkdir -p deploy
-          cp ./admin/build/libs/*.jar deploy/application.jar
+          cp deploy/*.jar deploy/application.jar
           cd deploy && zip -r deploy.zip .
 
       - name: Deploy to EB
