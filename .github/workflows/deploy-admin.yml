@@ -54,8 +54,8 @@ jobs:
 
       - name: Generate deployment package
         run: |
-          cp deploy/*.jar deploy/application.jar
-          cd deploy && zip -r deploy.zip .
+          cd deploy && mv *.jar application.jar
+          zip -r deploy.zip .
 
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v22
