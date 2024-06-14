@@ -1,4 +1,4 @@
-name: Deploy Admin
+name: Deploy Web
 
 on:
   push:
@@ -24,23 +24,23 @@ jobs:
 
       - name: Make properties file
         run: |
-          rm ./admin/src/main/resources/application.properties
-          echo "${{ secrets.APPLICATION_PROPERTIES_ADMIN }}" > ./admin/src/main/resources/application.properties
+          rm ./web/src/main/resources/application.properties
+          echo "${{ secrets.APPLICATION_PROPERTIES_WEB }}" > ./web/src/main/resources/application.properties
 
       - name: Build with Gradle
-        run: ./gradlew clean :admin:build
+        run: ./gradlew clean :web:build
 
       - name: Archive test artifacts
         uses: actions/upload-artifact@v4
         with:
           name: test
-          path: admin/build/reports/tests
+          path: web/build/reports/tests
 
       - name: Archive build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: application
-          path: admin/build/libs/*.jar
+          path: web/build/libs/*.jar
 
   deploy:
     needs: build
@@ -65,8 +65,8 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: ticket-reserve-admin
-          environment_name: Ticket-reserve-admin-env
+          application_name: ticket-reserve
+          environment_name: Ticket-reserve-env
           version_label: ver-${{ github.sha }}
           region: ap-northeast-2
           deployment_package: deploy/deploy.zip
