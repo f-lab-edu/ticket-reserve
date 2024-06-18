@@ -67,7 +67,7 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: ticket-reserve-admin
           environment_name: Ticket-reserve-admin-env
-          version_label: ver-${{ github.sha }}
+          version_label: ver-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
           region: ap-northeast-2
           deployment_package: deploy/deploy.zip
           wait_for_environment_recovery: 300
