@@ -16,6 +16,7 @@ public class ReservationService {
     private final ShowtimeService showtimeService;
     private final TheaterService theaterService;
     private final MovieService movieService;
+    private final SendExternalService sendExternalService;
     private final ReservationRepository reservationRepository;
     private final ShowtimeSeatRepository showtimeSeatRepository;
 
@@ -23,12 +24,14 @@ public class ReservationService {
                               ShowtimeService showtimeService,
                               TheaterService theaterService,
                               MovieService movieService,
+                              SendExternalService sendExternalService,
                               ReservationRepository reservationRepository,
                               ShowtimeSeatRepository showtimeSeatRepository) {
         this.userService = userService;
         this.showtimeService = showtimeService;
         this.theaterService = theaterService;
         this.movieService = movieService;
+        this.sendExternalService = sendExternalService;
         this.reservationRepository = reservationRepository;
         this.showtimeSeatRepository = showtimeSeatRepository;
     }
@@ -57,9 +60,13 @@ public class ReservationService {
         reservation.setStatus(ReservationStatus.RESERVED);
 
         try {
-            return reservationRepository.saveAndFlush(reservation);
+            reservationRepository.saveAndFlush(reservation);
         } catch (OptimisticLockingFailureException e) {
             throw BadRequestException.ALREADY_RESERVED_SEAT.get();
         }
+
+        sendExternalService.sendReservationConfirmed(reservation, showtime, seat, showtime.getTheater(), user);
+
+        return reservation;
     }
 }
