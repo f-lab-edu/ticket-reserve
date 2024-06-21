@@ -1,4 +1,4 @@
-package com.kjh.web.service;
+package com.kjh.admin.service;
 
 import com.kjh.core.service.MailService;
 import com.kjh.core.template.TemplateCode;

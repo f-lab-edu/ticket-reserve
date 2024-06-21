@@ -6,5 +6,5 @@ import java.util.Map;
 
 public interface MailService {
 
-    void send(TemplateCode templateCode, String email, Map<String, Object> model);
+    void sendAsync(TemplateCode templateCode, String email, Map<String, Object> model);
 }

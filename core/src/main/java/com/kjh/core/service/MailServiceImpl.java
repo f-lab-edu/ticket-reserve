@@ -3,6 +3,7 @@ package com.kjh.core.service;
 import com.kjh.core.template.TemplateCode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -35,7 +36,8 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void send(TemplateCode templateCode, String email, Map<String, Object> model) {
+    @Async
+    public void sendAsync(TemplateCode templateCode, String email, Map<String, Object> model) {
         SesClient client = getClientBuilder().build();
 
         try {

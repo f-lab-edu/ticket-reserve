@@ -29,6 +29,6 @@ public class SendExternalService {
         map.put("seat", seat.getRowCode().name() + seat.getNumber());
         map.put("theater", theater.getName());
         map.put("price", reservation.getPrice());
-        mailService.send(TemplateCode.RESERVATION_CONFIRMED, user.getEmail(), map);
+        mailService.sendAsync(TemplateCode.RESERVATION_CONFIRMED, user.getEmail(), map);
     }
 }
