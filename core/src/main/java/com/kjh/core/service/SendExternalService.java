@@ -1,5 +1,6 @@
 package com.kjh.core.service;
 
+import com.kjh.core.dto.MailMessage;
 import com.kjh.core.model.*;
 import com.kjh.core.template.TemplateCode;
 import org.springframework.stereotype.Service;
@@ -12,9 +13,11 @@ import java.util.Map;
 public class SendExternalService {
 
     private final MailService mailService;
+    private final MessageQueueService messageQueueService;
 
-    public SendExternalService(MailService mailService) {
+    public SendExternalService(MailService mailService, MessageQueueService messageQueueService) {
         this.mailService = mailService;
+        this.messageQueueService = messageQueueService;
     }
 
     public void sendReservationConfirmed(Reservation reservation,
@@ -30,5 +33,6 @@ public class SendExternalService {
         map.put("theater", theater.getName());
         map.put("price", reservation.getPrice());
         mailService.sendAsync(TemplateCode.RESERVATION_CONFIRMED, user.getEmail(), map);
+        messageQueueService.send(Queue.MAIL, new MailMessage(TemplateCode.RESERVATION_CONFIRMED, user.getEmail(), map));
     }
 }

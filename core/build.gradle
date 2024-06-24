@@ -43,6 +43,7 @@ dependencies {
 
     implementation(platform("software.amazon.awssdk:bom:2.26.5"))
     implementation 'software.amazon.awssdk:ses'
+    implementation 'software.amazon.awssdk:sqs'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'

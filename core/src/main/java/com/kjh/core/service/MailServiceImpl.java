@@ -22,6 +22,9 @@ public class MailServiceImpl implements MailService {
 
     private final TemplateEngine mailTemplateEngine;
 
+    @Value("${aws.ses.region}")
+    private String region;
+
     @Value("${aws.ses.access-key-id}")
     private String accessKeyId;
 
@@ -53,10 +56,9 @@ public class MailServiceImpl implements MailService {
     }
 
     private SesClientBuilder getClientBuilder() {
-        Region region = Region.AP_NORTHEAST_2;
         AwsBasicCredentials credentials = AwsBasicCredentials.create(accessKeyId, secretAccessKey);
         return SesClient.builder()
-            .region(region)
+            .region(Region.of(region))
             .credentialsProvider(StaticCredentialsProvider.create(credentials));
     }
 
