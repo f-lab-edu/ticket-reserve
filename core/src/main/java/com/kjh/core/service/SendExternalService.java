@@ -12,11 +12,9 @@ import java.util.Map;
 @Service
 public class SendExternalService {
 
-    private final MailService mailService;
     private final MessageQueueService messageQueueService;
 
-    public SendExternalService(MailService mailService, MessageQueueService messageQueueService) {
-        this.mailService = mailService;
+    public SendExternalService(MessageQueueService messageQueueService) {
         this.messageQueueService = messageQueueService;
     }
 
@@ -32,7 +30,6 @@ public class SendExternalService {
         map.put("seat", seat.getRowCode().name() + seat.getNumber());
         map.put("theater", theater.getName());
         map.put("price", reservation.getPrice());
-        mailService.sendAsync(TemplateCode.RESERVATION_CONFIRMED, user.getEmail(), map);
         messageQueueService.send(Queue.MAIL, new MailMessage(TemplateCode.RESERVATION_CONFIRMED, user.getEmail(), map));
     }
 }

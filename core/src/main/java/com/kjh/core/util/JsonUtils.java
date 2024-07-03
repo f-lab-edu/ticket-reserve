@@ -20,4 +20,13 @@ public final class JsonUtils {
             return null;
         }
     }
+
+    public static <T> T fromJson(String json, Class<T> clazz) {
+        try {
+            return objectMapper.readValue(json, clazz);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage(), e);
+            return null;
+        }
+    }
 }

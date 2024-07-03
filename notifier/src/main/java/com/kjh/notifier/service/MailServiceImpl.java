@@ -1,8 +1,7 @@
-package com.kjh.core.service;
+package com.kjh.notifier.service;
 
-import com.kjh.core.template.TemplateCode;
+import com.kjh.core.dto.MailMessage;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
@@ -14,9 +13,6 @@ import software.amazon.awssdk.services.ses.SesClient;
 import software.amazon.awssdk.services.ses.SesClientBuilder;
 import software.amazon.awssdk.services.ses.model.*;
 
-import java.util.Map;
-
-@Profile("dev")
 @Service
 public class MailServiceImpl implements MailService {
 
@@ -40,15 +36,15 @@ public class MailServiceImpl implements MailService {
 
     @Override
     @Async
-    public void sendAsync(TemplateCode templateCode, String email, Map<String, Object> model) {
+    public void sendAsync(MailMessage mailMessage) {
         SesClient client = getClientBuilder().build();
 
         try {
             Context context = new Context();
-            context.setVariables(model);
-            String bodyHTML = mailTemplateEngine.process(templateCode.getFilename(), context);
+            context.setVariables(mailMessage.model());
+            String bodyHTML = mailTemplateEngine.process(mailMessage.templateCode().getFilename(), context);
 
-            sendEmail(client, sender, email, templateCode.getSubject(), bodyHTML);
+            sendEmail(client, sender, mailMessage.email(), mailMessage.templateCode().getSubject(), bodyHTML);
             client.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
