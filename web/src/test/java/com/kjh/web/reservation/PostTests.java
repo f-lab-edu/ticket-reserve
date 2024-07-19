@@ -1,12 +1,17 @@
-package com.kjh.admin.reservation;
+package com.kjh.web.reservation;
 
-import com.kjh.admin.annotation.AutoDomainSource;
-import com.kjh.admin.annotation.WebTest;
-import com.kjh.admin.request.*;
-import com.kjh.admin.response.ReservationResponse;
-import com.kjh.admin.service.MessageQueueServiceSpy;
 import com.kjh.core.dto.MailMessage;
 import com.kjh.core.service.Queue;
+import com.kjh.web.MovieRequest;
+import com.kjh.web.SeatRequest;
+import com.kjh.web.TestDataService;
+import com.kjh.web.TheaterRequest;
+import com.kjh.web.annotation.AutoDomainSource;
+import com.kjh.web.annotation.WebTest;
+import com.kjh.web.request.Credentials;
+import com.kjh.web.request.ReservationRequest;
+import com.kjh.web.response.ReservationResponse;
+import com.kjh.web.service.MessageQueueServiceSpy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +29,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import static com.kjh.admin.TestLanguage.*;
+import static com.kjh.web.TestLanguage.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @WebTest
 @DisplayName("POST /reservations")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class PostTests {
+
+    @Autowired
+    private TestDataService testDataService;
 
     @ParameterizedTest
     @AutoDomainSource
@@ -45,10 +53,10 @@ class PostTests {
         // Arrange
         signup(client, credentials);
         String accessToken = signin(client, credentials);
-        long movieId = createMovie(client, accessToken, movieRequest);
-        long theaterId = createTheater(client, accessToken, theaterRequest);
-        long seatId = createSeat(client, accessToken, theaterId, seatRequest);
-        long showtimeId = createShowtime(client, accessToken, new ShowtimeRequest(movieId, theaterId, showDatetime));
+        long movieId = testDataService.createMovie(movieRequest).getId();
+        long theaterId = testDataService.createTheater(theaterRequest).getId();
+        long seatId = testDataService.createSeat(theaterId, seatRequest).getId();
+        long showtimeId = testDataService.createShowtime(movieId, theaterId, showDatetime).getId();
 
         // Act
         ReservationRequest reservationRequest = new ReservationRequest(showtimeId, seatId);
@@ -77,10 +85,10 @@ class PostTests {
         // Arrange
         signup(client, credentials);
         String accessToken = signin(client, credentials);
-        long movieId = createMovie(client, accessToken, movieRequest);
-        long theaterId = createTheater(client, accessToken, theaterRequest);
-        long seatId = createSeat(client, accessToken, theaterId, seatRequest);
-        long showtimeId = createShowtime(client, accessToken, new ShowtimeRequest(movieId, theaterId, showDatetime));
+        long movieId = testDataService.createMovie(movieRequest).getId();
+        long theaterId = testDataService.createTheater(theaterRequest).getId();
+        long seatId = testDataService.createSeat(theaterId, seatRequest).getId();
+        long showtimeId = testDataService.createShowtime(movieId, theaterId, showDatetime).getId();
         ReservationRequest reservationRequest = new ReservationRequest(showtimeId, seatId);
         createReservation(client, accessToken, reservationRequest);
 
@@ -109,10 +117,10 @@ class PostTests {
         // Arrange
         signup(client, credentials);
         String accessToken = signin(client, credentials);
-        long movieId = createMovie(client, accessToken, movieRequest);
-        long theaterId = createTheater(client, accessToken, theaterRequest);
-        long seatId = createSeat(client, accessToken, theaterId, seatRequest);
-        long showtimeId = createShowtime(client, accessToken, new ShowtimeRequest(movieId, theaterId, showDatetime));
+        long movieId = testDataService.createMovie(movieRequest).getId();
+        long theaterId = testDataService.createTheater(theaterRequest).getId();
+        long seatId = testDataService.createSeat(theaterId, seatRequest).getId();
+        long showtimeId = testDataService.createShowtime(movieId, theaterId, showDatetime).getId();
         ReservationRequest reservationRequest = new ReservationRequest(showtimeId, seatId);
 
         // Act
@@ -150,14 +158,14 @@ class PostTests {
         LocalDateTime showDatetime,
         @Autowired TestRestTemplate client,
         @Autowired MessageQueueServiceSpy messageQueueService
-    ) {
+        ) {
         // Arrange
         signup(client, credentials);
         String accessToken = signin(client, credentials);
-        long movieId = createMovie(client, accessToken, movieRequest);
-        long theaterId = createTheater(client, accessToken, theaterRequest);
-        long seatId = createSeat(client, accessToken, theaterId, seatRequest);
-        long showtimeId = createShowtime(client, accessToken, new ShowtimeRequest(movieId, theaterId, showDatetime));
+        long movieId = testDataService.createMovie(movieRequest).getId();
+        long theaterId = testDataService.createTheater(theaterRequest).getId();
+        long seatId = testDataService.createSeat(theaterId, seatRequest).getId();
+        long showtimeId = testDataService.createShowtime(movieId, theaterId, showDatetime).getId();
 
         // Act
         ReservationRequest reservationRequest = new ReservationRequest(showtimeId, seatId);

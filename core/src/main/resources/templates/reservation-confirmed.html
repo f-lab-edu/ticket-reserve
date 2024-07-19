@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>영화 예매 확정 메일</title>
+</head>
+<body>
+<p>예매 정보를 확인해주세요.</p>
+<p><strong>예매 번호:</strong> <span th:text="${reservationNo}"></span></p>
+<p><strong>상영일:</strong> <span th:text="${date}"></span></p>
+<p><strong>상영시간:</strong> <span th:text="${time}"></span></p>
+<p><strong>좌석:</strong> <span th:text="${seat}"></span></p>
+<p><strong>영화관:</strong> <span th:text="${theater}"></span></p>
+<p><strong>금액:</strong> <span th:text="${price}"></span></p>
+</body>
+</html>

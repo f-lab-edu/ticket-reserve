@@ -8,6 +8,6 @@ import com.kjh.core.model.ShowtimeSeatStatus;
 public record ShowtimeSeatResponse(long id, SeatRowCode rowCode, int number, ShowtimeSeatStatus status) {
 
     public ShowtimeSeatResponse(ShowtimeSeat showtimeSeat, Seat seat) {
-        this(showtimeSeat.getId(), seat.getRowCode(), seat.getNumber(), showtimeSeat.getStatus());
+        this(seat.getId(), seat.getRowCode(), seat.getNumber(), showtimeSeat.getStatus());
     }
 }
